@@ -1,0 +1,193 @@
+<alert type="info" dismissible="true"  *ngIf="cancelReservationChecker == true">
+  Reservation has been cancelled successfully
+</alert>
+
+<alert type="info" dismissible="true"  *ngIf="createReservationChecker == true">
+  Reservation has been created successfully
+</alert>
+
+<alert type="info" dismissible="true"  *ngIf="editReservationChecker == true">
+  Reservation has been edited successfully
+</alert>
+
+<alert type="info" dismissible="true"  *ngIf="checkInReservationChecker == true">
+  Guest successfully checked-in
+</alert>
+
+<div class="row filters">
+  <div class="input-group col-md-3">
+    <input class="form-control" placeholder="Filter by start date" id="startDate2"
+           name="dp" [(ngModel)]="filterStartDate" ngbDatepicker #d="ngbDatepicker"
+          (dateSelect)="filterReservations()">
+    <div class="input-group-append">
+      <button class="btn btn-outline-secondary" (click)="d.toggle()"
+              type="button"><i class="fa fa-calendar"></i></button>
+    </div>
+    <div class="input-group-append">
+      <button class="btn btn-outline-secondary" (click)="cancelSearchDate()"
+              type="button"><i class="fa fa-close"></i></button>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <select id="roomType" class="form-control" [(ngModel)]="filterRoomType" (change)="filterReservations()">
+      <option value="" disabled>Filter by room type</option>
+      <option *ngFor="let type of hotelRoomTypes" [value]="type.roomTypeId" style="text-transform: capitalize">
+        {{type.roomTypeName}}
+      </option>
+      <option value="all">See all rooms</option>
+    </select>
+  </div>
+</div>
+
+<div class="row" *ngIf="error === undefined">
+  <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let reservation of reservations">
+    <div class="card">
+      <div class="card-header header-reserved" *ngIf="!reservation.exceedStartDate">
+        Reservation
+        <div class="btn-group card-header-actions" dropdown>
+          <button dropdownToggle type="button" class="btn btn-sm dropdown-toggle text-white"
+                  #dropdown (mouseover)="dropdown.click()">
+            Actions <span class="caret"></span>
+          </button>
+          <ul *dropdownMenu class="dropdown-menu" role="menu">
+            <li role="menuitem" [routerLink]="['/room/reservation', reservation.reservationId]"><a class="dropdown-item">Check in</a></li>
+            <li role="menuitem">
+              <a class="dropdown-item" (click)="open(editReservation)">Edit Reservation</a>
+            </li>
+            <li role="menuitem" (click)="open(cancelReservationForm)"><a class="dropdown-item">Cancel Reservation</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="card-header pg-danger text-white" *ngIf="reservation.exceedStartDate">
+        Reservation
+        <div class="btn-group card-header-actions" dropdown>
+          <button dropdownToggle type="button" class="btn btn-sm dropdown-toggle text-white"
+                  #dropdown (mouseover)="dropdown.click()">
+            Actions <span class="caret"></span>
+          </button>
+          <ul *dropdownMenu class="dropdown-menu" role="menu">
+            <li role="menuitem" [routerLink]="['/room/reservation', reservation.reservationId]"><a class="dropdown-item">Check in</a></li>
+            <li role="menuitem">
+              <a class="dropdown-item" (click)="open(editReservation)">Edit Reservation</a>
+            </li>
+            <li role="menuitem" (click)="open(cancelReservationForm)"><a class="dropdown-item">Cancel Reservation</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="roomCards">
+        <div class="firstFlex">
+          <div>
+            <div>
+              <span>{{reservation.payingGuestName}}</span>
+            </div>
+            <div>
+              <span>{{reservation.adultsPerRoom * reservation.numOfRooms}} Adult(s), {{reservation.childrenPerRoom * reservation.numOfRooms}} Children</span>
+            </div>
+            <div>
+              <span>&#8358; {{reservation.totalPayment | number}}</span>
+            </div>
+            <div>
+              <span style="text-transform: capitalize" *ngIf="reservation.numOfRooms >1">
+                {{reservation.numOfRooms}} {{reservation.roomTypeName}} Rooms
+              </span>
+              <span style="text-transform: capitalize" *ngIf="reservation.numOfRooms == 1">
+                {{reservation.numOfRooms}} {{reservation.roomTypeName}} Room
+              </span>
+            </div>
+            <div [class.startDateError]="reservation.exceedStartDate">
+              {{reservation.formattedStartDate}} - {{reservation.formattedEndDate}}
+            </div>
+          </div>
+          <div *ngIf="!reservation.exceedStartDate">
+            <span [class]="reservation.icon" [style.color]="'#1765CB'" [tooltip]="reservation.roomTypeName"
+                  style="font-size: 40px"></span>
+          </div>
+          <div *ngIf="reservation.exceedStartDate">
+            <span [class]="reservation.icon" [style.color]="'#BF0808'" [tooltip]="reservation.roomTypeName"
+                  style="font-size: 40px"></span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="progress progress-xs mt-3 mb-0">
+          <div class="progress-bar" style="background-color: #1765CB" role="progressbar"
+               aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" *ngIf="!reservation.exceedStartDate">
+          </div>
+          <div class="progress-bar" style="background-color: #BF0808" role="progressbar"
+               aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" *ngIf="reservation.exceedStartDate">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #cancelReservationForm let-modal>
+      <div class="modal-header">
+        <h4 class="modal-title">Cancel Reservation Form</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #cancellation="ngForm">
+          <div class="form-group">
+            <label for="cancel-reason">Reason?</label>
+            <textarea id="cancel-reason" class="form-control" style="height: 100px" [(ngModel)]="cancellationNote" name="cancellationNote"
+                      required #note="ngModel"></textarea>
+            <div *ngIf="note.invalid && (note.dirty || note.touched) && note.errors.required" class="validationError">
+              Cancellation note is required
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)="cancelReservation(reservation.reservationId)"
+                [disabled]="cancellation.invalid">Save</button>
+      </div>
+    </ng-template>
+
+    <ng-template #editReservation let-modal >
+      <div class="modal-header">
+        <h4 class="modal-title">Edit Reservation Form</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #editReservationForm="ngForm">
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label for="startDate">Start Date</label>
+                <div class="input-group">
+                  <input class="form-control" placeholder="YYYY-MM-DD" id="startDate" [minDate]="minDate"
+                         name="dp" [(ngModel)]="startDate" ngbDatepicker #d="ngbDatepicker" required (dateSelect)="updateStartDate()">
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button"><i class="fa fa-calendar"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <label for="endDate">End Date</label>
+              <div class="input-group">
+                <input class="form-control" placeholder="YYYY-MM-DD" id="endDate" [(ngModel)]="endDate"
+                       name="dp" ngbDatepicker #de="ngbDatepicker" [minDate]="minDate2" required>
+                <div class="input-group-append">
+                  <button class="btn btn-outline-secondary" (click)="de.toggle()" type="button"><i class="fa fa-calendar"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="editReservations(reservation.reservationId)" [disabled]="editReservationForm.invalid">Save</button>
+      </div>
+    </ng-template>
+  </div>
+</div>
+
+<div class="emptyPage" *ngIf="error !== undefined">
+  <div class="fa fa-folder-open-o"></div>
+  <div>No Reservations</div>
+</div>

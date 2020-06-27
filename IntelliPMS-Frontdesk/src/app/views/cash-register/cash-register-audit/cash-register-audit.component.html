@@ -1,0 +1,189 @@
+
+<div class="col-12">
+  <div>
+    <h2>Audit Cash Register</h2>
+    <div id="intro">
+      Only accounting department can work on this and you can view only cash register closed within the last 24 hours
+    </div>
+  </div>
+  <div class="card">
+    <tabset>
+      <tab heading="Currently Opened Cash Register">
+        <div>
+          <table class="table table-responsive-sm table-responsive-md">
+            <thead>
+              <tr>
+                <th>Sn</th>
+                <th>Staff Name</th>
+                <th>Department</th>
+                <th>Total Transactions</th>
+                <th>Total Cash</th>
+                <th>DateTime Opened</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let staff of activeCashRegisters; let i = index">
+                <td>{{i+1}}</td>
+                <td>{{staff.employeeName}}</td>
+                <td>{{staff.department}}</td>
+                <td>{{staff.totalTransactions}}</td>
+                <td>&#8358; {{staff.totalCash | number}}</td>
+                <td>{{staff.dateTimeOpened}}</td>
+                <td class="text-success">{{staff.statuss}}</td>
+                <td><button class="btn btn-sm btn-primary" (click)="getCashRegisterSummary(receiptSummary, staff.registerId)">
+                  view full details
+                </button></td>
+                <ng-template #receiptSummary let-modal>
+                  <div class="modal-header">
+                    <h4 class="modal-title">Cash Register Summary</h4>
+                    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="billCardDateDiv">
+                      <div class="billOwner">
+                        {{staff.employeeName}}
+                      </div>
+                      <div>
+                        {{currentTime}}
+                      </div>
+                    </div>
+                    <div class="billCardTableDiv" style="margin-top:-30px">
+                      <table>
+                        <tr *ngFor="let record of cashRegisterSummary">
+                          <td>
+                            <span *ngIf="record.paymentType == 'cashOnHand'">Opening Cash:</span>
+                            <span class="displayer" *ngIf="record.paymentType !== 'cashOnHand'">{{record.paymentType}}:</span>
+                          </td>
+                          <td>
+                            <span *ngIf="record.paymentType == 'cashOnHand'">&#8358; {{record.totalAmount | number}}</span>
+                            <span *ngIf="record.paymentType !== 'cashOnHand' && record.num === 1">
+                              &#8358; {{record.totalAmount | number}} ({{record.num}} item)
+                            </span>
+                            <span *ngIf="record.paymentType !== 'cashOnHand' && record.num !== 1">
+                              &#8358; {{record.totalAmount | number}} ({{record.num}} items)
+                            </span>
+                          </td>
+                        </tr>
+                        <hr/>
+                        <tr style="font-size: 16px; font-weight: 600">
+                          <td>Total:</td>
+                          <td>&#8358; {{totalAmount | number}} </td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button class="btn btn-primary pull-right">Print Receipt</button>
+                  </div>
+                </ng-template>
+              </tr>
+            </tbody>
+          </table>
+          <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+            <li class="page-item active">
+              <a class="page-link" href="#">1</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">4</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+          </ul>
+        </div>
+      </tab>
+      <tab heading="Closed Cash Register">
+        <div>
+          <table class="table table-responsive-sm table-responsive-md">
+            <thead>
+            <tr>
+              <th>Sn</th>
+              <th>Staff Name</th>
+              <th>Department</th>
+              <th>Total Transactions</th>
+              <th>Total Amount on Close</th>
+              <th>DateTime Opened</th>
+              <th>DateTime Closed</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let staff of closedCashRegisters; let i = index">
+              <td>{{i+1}}</td>
+              <td>{{staff.employeeName}}</td>
+              <td>{{staff.department}}</td>
+              <td>{{staff.totalTransactions}}</td>
+              <td>&#8358; {{staff.totalCash | number}}</td>
+              <td>{{staff.dateTimeOpened}}</td>
+              <td>{{staff.dateTimeClosed}}</td>
+              <td class="text-danger">{{staff.statuss}}</td>
+              <td><button class="btn btn-sm btn-primary" (click)="getCashRegisterSummary(receiptSummary, staff.registerId)">
+                view full details
+              </button></td>
+              <ng-template #receiptSummary let-modal>
+                <div class="modal-header">
+                  <h4 class="modal-title">Cash Register Summary</h4>
+                  <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="billCardDateDiv">
+                    <div class="billOwner">
+                      {{staff.employeeName}}
+                    </div>
+                    <div>
+                      {{currentTime}}
+                    </div>
+                  </div>
+                  <div class="billCardTableDiv" style="margin-top:-30px">
+                    <table>
+                      <tr *ngFor="let record of cashRegisterSummary">
+                        <td>
+                          <span *ngIf="record.paymentType == 'cashOnHand'">Opening Cash:</span>
+                          <span class="displayer" *ngIf="record.paymentType !== 'cashOnHand'">{{record.paymentType}}:</span>
+                        </td>
+                        <td>
+                          <span *ngIf="record.paymentType == 'cashOnHand'">&#8358; {{record.totalAmount | number}}</span>
+                          <span *ngIf="record.paymentType !== 'cashOnHand' && record.num === 1">
+                              &#8358; {{record.totalAmount | number}} ({{record.num}} item)
+                            </span>
+                          <span *ngIf="record.paymentType !== 'cashOnHand' && record.num !== 1">
+                              &#8358; {{record.totalAmount | number}} ({{record.num}} items)
+                            </span>
+                        </td>
+                      </tr>
+                      <hr/>
+                      <tr style="font-size: 16px; font-weight: 600">
+                        <td>Total:</td>
+                        <td>&#8358; {{totalAmount | number}} </td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-primary pull-right">Print Receipt</button>
+                </div>
+              </ng-template>
+            </tr>
+            </tbody>
+          </table>
+          <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+            <li class="page-item active">
+              <a class="page-link" href="#">1</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">4</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+          </ul>
+        </div>
+      </tab>
+    </tabset>
+  </div>
+</div>

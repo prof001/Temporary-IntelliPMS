@@ -1,0 +1,43 @@
+<alert type="danger" dismissible="true" *ngIf="showExportError === true" (onClose)="onAlertClosed()">
+  Can't export an empty record to CSV
+</alert>
+<div class="col-12 col-lg-12">
+  <div class="card">
+    <div class="card-header">
+      Customers List
+      <button class="btn btn-sm btn-secondary float-right" (click)="exportDataToCsv()">Export as CSV</button>
+    </div>
+    <div class="card-body">
+      <table class="table table-responsive-sm table-outline table-hover">
+        <thead class="thead-light">
+        <tr>
+          <th>Sn</th>
+          <th>Guest Name</th>
+          <th>Phone Number</th>
+          <th>Last CheckIn</th>
+          <th>Last Hotel</th>
+          <th>Total Room Revenue</th>
+          <th>Total Room Service Revenue</th>
+          <th>Total Laundry Service Revenue</th>
+          <th>Total Housekeeping Revenue</th>
+          <th>Total Revenue</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let customer of customers; let i=index">
+          <td>{{i+1}}</td>
+          <td>{{customer.guestName}}</td>
+          <td>{{customer.phoneNumber}}</td>
+          <td>{{customer.lastCheckIn}}</td>
+          <td>{{customer.lastHotel}}</td>
+          <td>&#8358;{{customer.roomRevenue | number}}</td>
+          <td>&#8358;{{customer.roomServiceRevenue | number}}</td>
+          <td>&#8358;{{customer.laundryServiceRevenue | number}}</td>
+          <td>&#8358;{{customer.houseKeepingRevenue | number}}</td>
+          <td>&#8358;{{customer.totalRevenue | number}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,60 @@
+<app-header
+  [fixed]="true"
+  [navbarBrandFull]="{src: 'assets/img/brand/white.jpg', width: 89, height: 25, alt: 'IntelliPMS Logo'}"
+  [navbarBrandMinimized]="{src: 'assets/img/brand/white.jpg', width: 30, height: 30, alt: 'IntelliPMS Logo'}"
+  [asideMenuToggler]=false
+  [sidebarToggler]="false">
+
+  <ul class="nav navbar-nav ml-auto">
+    <li class="nav-item d-md-down-none">
+      <a class="nav-link" href="#"><i class="icon-bell"></i><span class="badge badge-pill badge-danger">5</span></a>
+    </li>
+    <li class="nav-item dropdown" dropdown placement="bottom right">
+      <a class="nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" dropdownToggle (click)="false">
+        <img [src]="employee.picture" class="img-avatar" [alt]="employee.employeeName"/>
+      </a>
+      <div class="dropdown-menu dropdown-menu-right" *dropdownMenu aria-labelledby="simple-dropdown">
+        <a class="dropdown-item" style="cursor: pointer">
+          <i class="fa fa-envelope-o"></i> Messages<span class="badge badge-success">42</span>
+        </a>
+        <a class="dropdown-item" style="cursor: pointer"><i class="fa fa-user"></i> Profile</a>
+        <a class="dropdown-item" style="cursor: pointer"><i class="fa fa-wrench"></i> Setting</a>
+        <a class="dropdown-item" style="cursor: pointer" (click)="logOut()"><i class="fa fa-lock"></i> Logout</a>
+      </div>
+    </li>
+  </ul>
+</app-header>
+
+<div class="row">
+  <div class="col-sm-6 col-md-4 col-lg-3" id="displayCard" *ngFor="let hotel of hotels">
+    <div class="card" (click)="proceedToDashboard(hotel.hotelId)">
+      <img class="card-img-top" [src]="hotel.picture" alt="Card image cap" height="200px">
+      <div class="cardBody">
+        <h5 class="text-center">{{hotel.hotelName}}</h5>
+        <div class="text-center subTitle">{{hotel.location}}</div>
+        <div class="columnFlex">
+          <div class="rowFlex">
+            <div>
+              <i class="fa fa-briefcase"></i>
+              <span>{{hotel.managerName}}</span>
+            </div>
+            <div>
+              <i class="fa fa-group"></i>
+              <span>{{hotel.totalEmployees}} Staffs</span>
+            </div>
+          </div>
+          <div class="rowFlex">
+            <div>
+              <span class="fa fa-bed"></span>
+              <span>{{hotel.totalRoomsCreated}} rooms</span>
+            </div>
+            <div>
+              <i class="fa fa-desktop"></i>
+              <span>Nothing yet</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

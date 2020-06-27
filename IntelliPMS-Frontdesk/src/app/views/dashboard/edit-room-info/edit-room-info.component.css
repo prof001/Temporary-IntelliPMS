@@ -1,0 +1,16 @@
+.btn-lg:hover {
+  color:white;
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+}
+
+input[type='file'] {
+  display: none;
+}
+
+button[type='button'] {
+  margin-top: 7px;
+}

@@ -1,0 +1,83 @@
+th{
+  padding-right: 10px;
+}
+
+table {
+  line-height: 30px;
+}
+
+.btn-sm {
+  color: white;
+}
+
+.card-header{
+  color:white;
+}
+
+#timeDiv {
+  width: 100%;
+  font-size: 16px;
+  margin-bottom: 15px;
+}
+
+.roomIcon {
+  font-size: 40px;
+}
+
+.roomCards {
+  display: flex;
+  flex-direction: column;
+}
+.firstFlex {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 14px 10px;
+}
+
+.firstFlex div:nth-child(1) {
+  line-height: 25px;
+}
+
+.firstFlex div:nth-child(1) span {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.progress-bar {
+  width: 100%;
+}
+
+.caret {
+  color: white;
+}
+
+.dropdown-menu li {
+  cursor: pointer;
+}
+
+.header-reserved {
+  background-color: #1765CB;
+}
+
+.customize {
+  font-size: 13px;
+  color: #1D99C4;
+  cursor: pointer;
+}
+
+.customize:hover {
+  text-decoration: underline;
+  color: #2E829F;
+}
+
+.hideElement {
+  display: none;
+}
+
+.fa-user-secret {
+  font-size: 100px;
+}
+
+.amountLbl {
+  width: 100%;
+}

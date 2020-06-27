@@ -1,0 +1,66 @@
+<div class="col-lg-12">
+  <div class="card">
+    <div class="card-header">
+      Checked-in Rooms
+    </div>
+    <div class="card-body">
+      <table class="table table-responsive-sm table-outline table-hover">
+        <thead class="thead-light">
+        <tr>
+          <th>Sn</th>
+          <th>Room</th>
+          <th>Checkin Date</th>
+          <th>Checkout Date</th>
+          <th>Occupant Number</th>
+          <th>Extended</th>
+          <th>DropOff Key</th>
+          <th>Changed Rooms</th>
+          <th>Deposit</th>
+          <th>Bill</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let room of checkedInRooms; let i = index">
+          <td>{{i+1}}</td>
+          <td>Room {{room.roomNumber}}</td>
+          <td>{{room.formattedCheckInDate}}</td>
+          <td>{{room.formattedCheckOutDate}}</td>
+          <td>{{room.numOfGuests}}</td>
+          <td>
+            <span class="status" [style.background-color]="'#B7463E'" *ngIf="room.extended === 'true'">
+              Yes
+            </span>
+            <span class="status bg-success"  *ngIf="room.extended !== 'true'">
+              No
+            </span>
+          </td>
+          <td>
+            <span class="status" [style.background-color]="'#B7463E'" *ngIf="room.dropOffKey === 'true'">
+              Yes
+            </span>
+            <span class="status bg-success"  *ngIf="room.dropOffKey !== 'true'">
+              No
+            </span>
+          </td>
+          <td>
+            <span class="status" [style.background-color]="'#B7463E'" *ngIf="room.changedRoom === 'true'">
+              Yes
+            </span>
+            <span class="status bg-success"  *ngIf="room.changedRoom !== 'true'">
+              No
+            </span>
+          </td>
+          <td>&#8358;{{room.totalDeposit | number}}</td>
+          <td>&#8358;{{room.totalBill | number}}</td>
+        </tr>
+        <tr>
+          <td colspan="8" class="totalStyle">Total</td>
+          <td class="totalStyle">&#8358;{{totalDeposit | number}}</td>
+          <td class="totalStyle">&#8358;{{totalBills | number}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="col-md-1"></div>

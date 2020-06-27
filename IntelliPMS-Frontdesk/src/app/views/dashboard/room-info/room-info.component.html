@@ -1,0 +1,105 @@
+<alert type="info" dismissible="true" *ngIf="successChecker == true">
+  Congrats, you have successfully updated room information
+</alert>
+<div class="text-center" style="margin-bottom: 20px">
+  <h1>Room Information</h1>
+</div>
+
+<div class="row">
+  <div class="col-md-6" *ngIf="roomGeneralInfo.picture !== null">
+    <img [src]="roomGeneralInfo.picture" height="350px" width="400px"/>
+  </div>
+  <div class="col-md-6" *ngIf="roomGeneralInfo.picture === null">
+    <img src="../../../../assets/no-image.jpg" height="350px" width="400px"/>
+  </div>
+  <div class="col-md-6 animated fadeIn" id="majorInfo">
+    <div class="card">
+      <div class="card-body">
+        <table>
+          <tr>
+            <th>Room Name:</th>
+            <td>Room {{roomGeneralInfo.roomNumber}}</td>
+          </tr>
+          <tr>
+            <th>Room Type:</th>
+            <td style="text-transform: capitalize">{{roomGeneralInfo.roomTypeName}}</td>
+          </tr>
+          <tr>
+            <th>Building:</th>
+            <td style="text-transform: capitalize">{{roomGeneralInfo.buildingName}}</td>
+          </tr>
+          <tr>
+            <th>Cost:</th>
+            <td>{{roomGeneralInfo.cost | number}} per night</td>
+          </tr>
+          <tr>
+            <th>Attributes:</th>
+            <td *ngIf="roomGeneralInfo.attributes.length > 0">
+              <span class="badge badge-secondary" *ngFor="let data of roomGeneralInfo.attributes">{{data}}</span>
+            </td>
+            <td *ngIf="roomGeneralInfo.attributes.length === 0">
+              <span style="color: #BF0808">No attributes yet</span>
+            </td>
+          </tr>
+          <tr>
+            <th>Status:</th>
+            <td style="text-transform: capitalize">{{roomGeneralInfo.roomStatus}}</td>
+          </tr>
+          <tr>
+            <th>Current Occupant:</th>
+            <td *ngIf="roomGeneralInfo.currentOccupant === null && !roomGeneralInfo.occupants">No Occupant</td>
+            <td *ngIf="roomGeneralInfo.currentOccupant !== null">{{roomGeneralInfo.currentOccupant}}</td>
+            <td *ngIf="roomGeneralInfo.currentOccupant === null && roomGeneralInfo.occupants">
+              <span class="badge badge-secondary" *ngFor="let occupant of roomGeneralInfo.occupants">
+                {{occupant.occupantName}}
+              </span>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--<div class="animated fadeIn" id="roomPreviousOccupants">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-header">
+          <h5>Last five occupants</h5>
+        </div>
+        <div class="card-body">
+          <table class="table table-responsive-sm table-responsive-md">
+            <thead>
+            <tr>
+              <th>Sn</th>
+              <th>Name</th>
+              <th>Date Checked-in</th>
+              <th>Time Checked-in</th>
+              <th>Days Spent</th>
+              <th>Amount Paid</th>
+              <th>Note</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let occupant of lastFiveOccupants; let i = index">
+              <td>{{i+1}}</td>
+              <td>{{occupant.name}}</td>
+              <td>{{occupant.dateCheckedIn}}</td>
+              <td>{{occupant.timeCheckedIn}}</td>
+              <td>{{occupant.daysSpent}}</td>
+              <td>{{occupant.amountPaid}}</td>
+              <td>{{occupant.note}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>-->
+
+<div class="pull-right mb-4">
+  <button class="btn btn-lg btn-primary" [routerLink]="['/dashboard/edit-room-info', roomId]">Edit Room Info</button>
+</div>
+

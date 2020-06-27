@@ -1,0 +1,222 @@
+<alert type="success" dismissible="true" *ngIf="showSuccessAlert === true" (onClose)="onAlertClosed()">
+  Employee has been created successfully!
+</alert>
+<div id="mainForm" class="mainForm">
+  <div class="col-sm-10 col-lg-9">
+    <div class="card">
+      <div class="card-header">
+        <strong>Create Employee</strong>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="employeeForm" (ngSubmit)="onCreateEmployee()">
+          <div class="row">
+            <div class="col-4">
+              <div class="form-group">
+                <label for="firstname">First Name<span class="compulsory">*</span></label>
+                <input
+                  type="text"
+                  formControlName="firstName"
+                  required
+                  class="form-control"
+                  id="firstname"
+                  placeholder="First name">
+                <div class="validationError" *ngIf="(firstName.dirty || firstName.touched) && firstName.invalid">
+                  <div *ngIf="firstName.errors.required">
+                    First name of employee is required
+                  </div>
+                  <div *ngIf="firstName.errors.pattern">
+                    First name can only be letters
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label for="other-names">Other Names</label>
+                <input
+                  type="text"
+                  formControlName="otherName"
+                  class="form-control"
+                  id="other-names"
+                  placeholder="Other names">
+                <div class="validationError" *ngIf="(otherName.dirty || otherName.touched) && otherName.invalid">
+                  <div *ngIf="otherName.errors.pattern">
+                    Other name can be only letters
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label for="lastname">Last name<span class="compulsory">*</span></label>
+                <input
+                  type="text"
+                  formControlName="lastName"
+                  required
+                  class="form-control"
+                  id="lastname"
+                  placeholder="Last name">
+                <div class="validationError" *ngIf="(lastName.dirty || lastName.touched) && lastName.invalid">
+                  <div *ngIf="lastName.errors.required">
+                    Last name of employee is required
+                  </div>
+                  <div *ngIf="lastName.errors.pattern">
+                    Last name can only be letters
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-6">
+              <div class="form-group">
+                <label for="phoneNumber">Phone Number<span class="compulsory">*</span></label>
+                <input
+                  type="text"
+                  formControlName="phoneNumber"
+                  required
+                  class="form-control"
+                  id="phoneNumber"
+                  placeholder="Employee's phone number"
+                >
+                <div class="validationError"
+                      *ngIf="(phoneNumber.dirty || phoneNumber.touched) && phoneNumber.invalid">
+                  <div *ngIf="phoneNumber.errors.required">
+                    The phone number of employee is required
+                  </div>
+                  <div *ngIf="phoneNumber.errors.pattern">
+                    Only numbers are acceptable
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label for="email">Email Address<span class="compulsory">*</span></label>
+                <input
+                  type="email"
+                  formControlName="emailAddress"
+                  required
+                  class="form-control"
+                  id="email"
+                  placeholder="Email"
+                >
+                <div class="validationError" *ngIf="(emailAddress.dirty || emailAddress.touched) && emailAddress.invalid">
+                  <div *ngIf="emailAddress.errors.required">
+                    Email Address is required
+                  </div>
+                  <div *ngIf="emailAddress.errors.email">
+                    Email Address not in correct format
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-6">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="role">Employee Role<span class="compulsory">*</span></label>
+                    <select id="role" formControlName="employeeRole" required class="form-control" (change)="onSelectEmployeeRole()">
+                      <option value="manager">Manager</option>
+                      <option value="admin" *ngIf="employee.employeeRole === 'admin'">Admin</option>
+                      <option value="front desk">Front Desk</option>
+                      <option value="waiter">Waiter</option>
+                    </select>
+                    <span class="validationError"
+                          *ngIf="(employeeRole.dirty || employeeRole.touched) && employeeRole.invalid && employeeRole.errors.required">
+                      Field can't be empty
+                    </span>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="gender">Gender<span class="compulsory">*</span></label>
+                    <select id="gender" formControlName="gender" required class="form-control">
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                    </select>
+                    <span class="validationError"
+                          *ngIf="(gender.dirty || gender.touched) && gender.invalid && gender.errors.required">
+                      Gender is important
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6" formArrayName="employeeHotels" >
+              <div class="col-md-12 employeeHotelDiv" *ngFor="let _ of employeeHotels.controls; let i=index" [formGroupName]="i">
+                <div class="form-group">
+                  <label for="employeeHotel">Assign Hotel to employee<span class="compulsory mr-auto">*</span>
+                    <span class="ml-auto removeForm" *ngIf = "employeeHotels.controls.length > 1"
+                          (click)="removeHotelList(i)">Remove
+                    </span>
+                  </label>
+                  <select formControlName="hotel" required class="form-control" id="employeeHotel">
+                    <option *ngFor="let hotel of hotels" [value]="hotel.hotelId">{{hotel.hotelName}}</option>
+                  </select>
+                </div>
+              </div>
+              <div style="margin-bottom: 10px">
+                <div class="addFormDiv">
+                  <span class="icon-plus font-lg"></span>
+                  <span class="addForm" (click)="addHotelList()">Assign more hotels to employee</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-2 mb-2">
+            <div class="col-md-6">
+              <div class="form-inline">
+                <input type="checkbox" id="loginAccess" class="form-control mr-2" formControlName="loginAccess"
+                       (click)="toggleLoginAccess()">
+                <label for="loginAccess">Give employee login access?</label>
+              </div>
+              <div class="form-inline" *ngIf="showOperateRegister">
+                <input type="checkbox" id="operateRegister" class="form-control mr-2" formControlName="operateRegister">
+                <label for="operateRegister">Operate Register?</label>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group" *ngIf="showPassword === true">
+                <input
+                  type="text"
+                  formControlName="password"
+                  class="form-control"
+                  id="password"
+                  placeholder="Assign a password to employee">
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="address">Address<span class="compulsory">*</span></label>
+            <textarea id="address" formControlName="address" required class="form-control" style="height: 100px"></textarea>
+            <span class="validationError"
+                  *ngIf="(address.dirty || address.touched) && address.invalid && address.errors.required">
+                  The address of employee is important
+                </span>
+          </div>
+          <div class="form-group">
+            <button type="button" class="btn btn-primary" (click)="filePicker.click()">Choose Employee Image</button> <br/>
+            <input
+              type="file"
+              id="picture"
+              formControlName="picture"
+              class="form-control"
+              #filePicker
+              (change)="showPreview($event)"
+            >
+            <div *ngIf="imageUrl && imageUrl !== ''" style="margin-top:5px">
+              <img [src]="imageUrl" alt="Hotel Picture" height="250px" width="430px">
+            </div>
+          </div>
+          <button type="submit" [disabled]="employeeForm.invalid || processing" class="btn btn-lg btn-primary float-right">
+            <span *ngIf="processing === false">Create</span>
+            <span *ngIf="processing === true"><i class="fa fa-circle-o-notch fa-spin"></i></span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

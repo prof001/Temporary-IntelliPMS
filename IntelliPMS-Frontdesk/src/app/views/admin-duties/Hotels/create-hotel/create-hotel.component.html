@@ -1,0 +1,154 @@
+<div id="mainForm" class="mainForm">
+  <div class="col-sm-10 col-md-10 col-lg-8">
+    <div class="card">
+      <div class="card-header">
+        <strong>Create Hotel</strong>
+      </div>
+      <div class="card-body">
+        <form class="form-group" [formGroup]="form" novalidate (ngSubmit)="createHotel()">
+          <div class="row">
+            <div class="col-6">
+              <div>
+                <label for="hotel-name">Name<span class="compulsory">*</span></label>
+                <input
+                  type="text"
+                  formControlName="hotelName"
+                  minlength="3"
+                  class="form-control"
+                  id="hotel-name"
+                  placeholder="Enter hotel name"
+                  required >
+                <span class="validationError" *ngIf="(hotelName.dirty || hotelName.touched) && hotelName.invalid && hotelName.errors.required">
+                  The hotel name is required
+                </span>
+                <span class="validationError" *ngIf="(hotelName.dirty || hotelName.touched) && hotelName.invalid && hotelName.errors.minlength">
+                  Hotel name must be atleast 3 characters
+                </span>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label for="rooms-number">Number of Rooms<span class="compulsory">*</span></label>
+                <input
+                  type="number"
+                  formControlName="numOfRooms"
+                  required
+                  class="form-control"
+                  id="rooms-number"
+                  placeholder="Enter number of rooms in the hotel"
+                >
+                <div class="validationError" *ngIf="(numOfRooms.dirty || numOfRooms.touched) && numOfRooms.invalid && numOfRooms.errors.required">
+                  The hotel's number of rooms is required
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="address">Address<span class="compulsory">*</span></label>
+            <textarea id="address" formControlName="address" required class="form-control" style="height: 100px"></textarea>
+            <div class="validationError" *ngIf="(address.dirty || address.touched) && address.invalid && address.errors.required">
+              The address of hotel is required
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="location">Location<span class="compulsory">*</span></label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="location"
+              required
+              id="location"
+              placeholder="Enter city and country where hotel is located"
+            >
+            <div class="validationError" *ngIf="(location.dirty || location.touched) && location.invalid && location.errors.required">
+              The location of hotel is required
+            </div>
+          </div>
+          <div formArrayName="bankAccountDetails">
+            <label>Bank Account Details<span class="compulsory">*</span></label>
+            <div *ngFor="let account of bankAccountDetails.controls; let i=index">
+              <div class="card">
+                <div class="card-header">
+                  <span>Account Detail {{i + 1}}</span>
+                  <span *ngIf="bankAccountDetails.controls.length > 1"
+                        (click)="removeBankAccount(i)" class="pull-right removeForm">Remove
+	                </span>
+                </div>
+                <div class="card-body" [formGroupName]="i">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <label for="bankName">Bank Name</label>
+                      <select id="bankName" class="form-control" formControlName="bankName" required>
+                        <option *ngFor="let bank of bankList" [value]="bank">{{bank}}</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="accountNumber">Account Number</label>
+                      <input type="number" id="accountNumber" class="form-control" formControlName="accountNumber" required>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="margin-bottom: 12px">
+              <div (click)="addBankAccount()" class="addFormDiv">
+                <span class="icon-plus font-lg"></span>
+                <span class="addForm">Add new bank account</span>
+              </div>
+            </div>
+          </div>
+
+          <div formArrayName="posDetails">
+            <label>POS Details<span class="compulsory">*</span></label>
+            <div *ngFor="let pos of posDetails.controls; let i=index">
+              <div class="card">
+                <div class="card-header">
+                  <span>POS Detail {{i + 1}}</span>
+                  <span *ngIf="posDetails.controls.length > 1"
+                        (click)="removePos(i)" class="pull-right removeForm">Remove
+                  </span>
+                </div>
+                <div class="card-body" [formGroupName]="i">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <label for="posBankName">Bank Name</label>
+                      <select id="posBankName" class="form-control" formControlName="posBankName" required>
+                        <option *ngFor="let bank of bankList" [value]="bank">{{bank}}</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="posId">POS ID</label>
+                      <input type="text" id="posId" class="form-control" formControlName="posId" required>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="margin-bottom: 12px">
+              <div (click)="addPos()" class="addFormDiv">
+                <span class="icon-plus font-lg"></span>
+                <span class="addForm">Add new POS</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <button type="button" class="btn btn-primary" (click)="filePicker.click()">Choose Hotel Image</button> <br/>
+            <input type="file" formControlName="picture" accept="image/*" id="picture" class="form-control" #filePicker (change)="showPreview($event)">
+            <div *ngIf="imageUrl && imageUrl !== ''">
+              <img [src]="imageUrl" alt="Hotel Picture" height="250px" width="430px">
+            </div>
+            <div class="validationError" *ngIf="(picture.dirty || picture.touched) && picture.invalid && picture.errors.required">
+              The image of hotel is required
+            </div>
+          </div>
+          <button class="btn btn-lg btn-primary float-right" [disabled]="!form.valid || processing" type="submit">
+            <span *ngIf="processing === false">Create</span>
+            <span *ngIf="processing === true"><i class="fa fa-circle-o-notch fa-spin"></i></span>
+          </button>
+          <!---->
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

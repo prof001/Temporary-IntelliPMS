@@ -1,0 +1,25 @@
+.fa-check-circle {
+  font-size: 17px;
+}
+
+#createLaundryDiv {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+  padding-right: 15px;
+}
+
+.viewItemSpan {
+  color: #013eb0;
+}
+
+.viewItemSpan:hover {
+  text-decoration: underline;
+  color: #013586;
+}
+
+.itemListUl {
+  list-style-type: disc;
+  line-height: 30px;
+  font-size: 15px;
+}

@@ -1,0 +1,167 @@
+<form>
+  <div class="row centred">
+    <div class="col-sm-12 col-md-9">
+      <div class="card">
+        <div class="card-header">
+          <strong>Stay Information</strong>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-sm-8">
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label>Arrival</label>
+                    <div class="input-group">
+                      <input class="form-control" placeholder="YYYY-MM-DD" disabled
+                             name="arrivalDate" [(ngModel)]="arrivalDate" ngbDatepicker #d="ngbDatepicker">
+                      <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button"><i class="fa fa-calendar"></i></button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <label>Time</label>
+                  <ngb-timepicker [(ngModel)]="arrivalTime" name="arrivalTime" disabled [meridian]="meridian" [spinners]="spinners">
+                  </ngb-timepicker>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label>Departure<span class="compulsory">*</span></label>
+                    <div class="input-group">
+                      <input class="form-control" placeholder="YYYY-MM-DD" name="departureDate" [minDate]="minDate"
+                             [(ngModel)]="departureDate" ngbDatepicker #de="ngbDatepicker" required>
+                      <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" (click)="de.toggle()" type="button">
+                          <i class="fa fa-calendar"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <label>Time</label>
+                  <ngb-timepicker [(ngModel)]="departureTime" name="departureTime" [meridian]="meridian" [spinners]="spinners" disabled>
+                  </ngb-timepicker>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-4 availableRoomsDiv">
+              <div>ROOM AVAILABILITY SUMMARY</div>
+              <div>
+                <ul>
+                  <li style="text-transform: capitalize" *ngFor="let type of availableRoomsSummary">
+                    <span *ngIf="type.totalAvailable == 1">
+                      {{type.roomTypeName}}: {{type.totalAvailable}} Room
+                    </span>
+                    <span *ngIf="type.totalAvailable > 1 || type.totalAvailable == 0">
+                      {{type.roomTypeName}}: {{type.totalAvailable}} Rooms
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-4">
+              <label for="roomType">Room Type<span class="compulsory">*</span></label>
+              <select id="roomType" class="form-control" [(ngModel)]="roomType" name="roomType">
+                <option *ngIf="hotelRoomTypes.length === 0">No room types</option>
+                <option *ngFor="let type of hotelRoomTypes" [value]="type.roomTypeId">{{type.roomTypeName}}</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label></label>
+              <div id="pickRoomBtn">
+                <button class="btn btn-primary" [disabled]="!departureDate || processing" (click)="getAvailableRooms()">
+                  <span *ngIf="processing === false">Show Available Rooms</span>
+                  <span *ngIf="processing === true"><i class="fa fa-circle-o-notch fa-spin"></i></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row centred" *ngIf="availableRooms.length > 0">
+    <div class="col-md-9">
+      <div class="row">
+        <div class="col-sm-6 col-md-4" *ngFor="let room of availableRooms">
+          <div class="card">
+            <div class="card-header bg-success" *ngIf="room.roomStatus === 'available'">
+              Room {{room.roomNumber}}
+              <button class="btn btn-secondary btn-sm pull-right" (click)="proceed(room.roomId)">Pick Room</button>
+            </div>
+            <div class="card-header bg-dark" *ngIf="room.roomStatus === 'occupied'">
+              Room {{room.roomNumber}}
+              <button class="btn btn-secondary btn-sm pull-right" (click)="proceed(room.roomId)">Pick Room</button>
+            </div>
+            <div class="roomCards">
+              <div class="firstFlex">
+                <div>
+                  <div>
+                    <span *ngIf="room.currentOccupant == 0">No Occupant</span>
+                    <span *ngIf="room.currentOccupant === null">Multiple Occupants</span>
+                    <span *ngIf="room.currentOccupant != 0 && room.currentOccupant !== null">{{room.currentOccupant}}</span>
+                  </div>
+                  <div>
+                    <span style="text-transform: capitalize">{{room.roomStatus}}</span>
+                    <span *ngIf="room.dropOffKey === 'true' && room.lostKey != 'true'" style="color:#BF0808">(Key dropped)</span>
+                    <span *ngIf="room.lostKey === 'true'" style="color:#BF0808">(Key lost)</span>
+                  </div>
+                  <div>
+                    <span>&#8358; {{room.cost | number}}</span>
+                  </div>
+                  <div>
+                    <span style="text-transform: capitalize">{{room.roomType}} room</span>
+                  </div>
+                  <div>
+                    <span style="color: #CA2012" *ngIf="room.daysLeft === -2">Can be occupied now</span>
+                    <span style="color: #CA2012" *ngIf="room.daysLeft === -1">Time Elapsed</span>
+                    <span style="color: #CA2012" *ngIf="room.daysLeft == 0">Today</span>
+                    <span style="text-transform: capitalize; color: #CA2012" *ngIf="room.daysLeft == 2">{{room.daysLeft}} days left</span>
+                    <span style="text-transform: capitalize; color: #CA2012" *ngIf="room.daysLeft == 1">{{room.daysLeft}} day left</span>
+                    <span style="text-transform: capitalize; color: #149C5A" *ngIf="room.daysLeft > 2">{{room.daysLeft}} days left</span>
+                  </div>
+                </div>
+                <div>
+                  <span [class]="room.icon" *ngIf="room.roomStatus == 'occupied'" style="font-size: 40px"
+                        [style.color]="'#2F353A'" [tooltip]="room.roomTypeName"></span>
+
+                  <span [class]="room.icon" *ngIf="room.roomStatus == 'available'" style="font-size: 40px"
+                        [style.color]="'#4DBD74'" [tooltip]="room.roomTypeName"></span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="progress progress-xs mt-3 mb-0">
+                <div class="progress-bar" style="background-color: #149C5A" role="progressbar" *ngIf="room.daysLeft > 2"
+                     aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" [tooltip]="room.daysLeft + ' days left'">
+                </div>
+                <div class="progress-bar pg-danger" role="progressbar" *ngIf="room.daysLeft == -1"
+                     aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" [tooltip]="'Time Elapsed'">
+                </div>
+                <div class="progress-bar pg-danger" role="progressbar" *ngIf="room.daysLeft == 2"
+                     aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" [tooltip]="room.daysLeft + ' days left'">
+                </div>
+                <div class="progress-bar pg-danger" role="progressbar" *ngIf="room.daysLeft == 1"
+                     aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" [tooltip]="room.daysLeft + ' day left'">
+                </div>
+                <div class="progress-bar pg-danger" role="progressbar" *ngIf="room.daysLeft == 0"
+                     aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" [tooltip]="room.daysLeft + ' Today'">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

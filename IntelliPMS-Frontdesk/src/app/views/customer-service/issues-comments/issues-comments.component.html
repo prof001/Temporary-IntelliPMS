@@ -1,0 +1,323 @@
+<alert type="info" dismissible="true"  *ngIf="issueCommentAlert == true">
+  Issue/Comment has been created successfully
+</alert>
+
+<div id="createIssueCommentDiv">
+  <button class="btn btn-primary" (click)="open(newIssueCommentForm)">
+    <span class="fa fa-plus"></span> Create new Issue/Comment
+  </button>
+</div>
+
+<div class="col-12">
+  <div class="card">
+    <tabset>
+      <tab>
+        <ng-template tabHeading><i class="fa fa-tasks"></i> Unprocessed Issues/Comments &nbsp;<span class="badge badge-pill badge-danger">
+          {{unprocessedIssuesCommentsNumber}}
+        </span></ng-template>
+        <div>
+          <table class="table table-responsive-sm table-responsive-md">
+            <thead>
+            <tr>
+              <th>Sn</th>
+              <th>Guest Name</th>
+              <th>Type</th>
+              <th>Note</th>
+              <th>Created DateTime</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngIf="unprocessedIssuesComments.length === 0" class="emptyRequest">
+              <td colspan="7">No unprocessed issues or comments</td>
+            </tr>
+            <tr *ngFor="let issue of unprocessedIssuesComments; let i = index">
+              <td>{{i+1}}</td>
+              <td *ngIf="issue.guestName !== null">
+                {{issue.guestName}}
+              </td>
+              <td *ngIf="issue.guestName === null">
+                Multiple Occupants
+              </td>
+              <td>{{issue.type}}</td>
+              <td *ngIf="issue.note.length <= 35">{{issue.note}}</td>
+              <td *ngIf="issue.note.length > 35">
+                {{(issue.note | slice:0: 35)+'...'}}
+                <span class="readMore" (click)="open(noteDisplay)">read more</span>
+              </td>
+              <td>{{issue.createdDateTime}}</td>
+              <td class="text-danger">{{issue.statuss}}</td>
+              <td><button class="btn btn-sm btn-primary" [disabled]="processing"
+                          (click)="updateIssuesComments('processing', issue.issueCommentId)">
+                <span *ngIf="processing === false">Start Processing</span>
+                <span *ngIf="processing === true"><i class="fa fa-circle-o-notch fa-spin"></i></span>
+              </button></td>
+
+              <ng-template #noteDisplay let-modal>
+                <div class="modal-header">
+                  <h4 class="modal-title">
+                    <span style="text-transform: capitalize">{{issue.type}}</span> by {{issue.guestName}}
+                  </h4>
+                  <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  {{issue.note}}
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-primary" (click)="modal.close()">Close</button>
+                </div>
+              </ng-template>
+
+            </tr>
+            </tbody>
+          </table>
+          <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+            <li class="page-item active">
+              <a class="page-link" href="#">1</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">4</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+          </ul>
+        </div>
+      </tab>
+      <tab>
+        <ng-template tabHeading><i class="fa fa-circle-o-notch fa-spin"></i> Processing Processing Issues/Comments</ng-template>
+        <div>
+          <table class="table table-responsive-sm table-responsive-md">
+            <thead>
+            <tr>
+              <th>Sn</th>
+              <th>Guest Name</th>
+              <th>Type</th>
+              <th>Note</th>
+              <th>Created DateTime</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngIf="processingIssuesComments.length === 0" class="emptyRequest">
+              <td colspan="7">No processing issues or comments</td>
+            </tr>
+            <tr *ngFor="let issue of processingIssuesComments; let i = index">
+              <td>{{i+1}}</td>
+              <td *ngIf="issue.guestName !== null">
+                {{issue.guestName}}
+              </td>
+              <td *ngIf="issue.guestName === null">
+                Multiple Occupants
+              </td>
+              <td>{{issue.type}}</td>
+              <td *ngIf="issue.note.length <= 35">{{issue.note}}</td>
+              <td *ngIf="issue.note.length > 35">
+                {{(issue.note | slice:0: 35)+'...'}}
+                <span class="readMore" (click)="open(noteDisplay)">read more</span>
+              </td>
+              <td>{{issue.createdDateTime}}</td>
+              <td class="text-warning">{{issue.statuss}}</td>
+              <td><button class="btn btn-success btn-sm" [disabled]="processing"
+                          (click)="updateIssuesComments('resolved', issue.issueCommentId)">
+                <span *ngIf="processing === false">Resolved</span>
+                <span *ngIf="processing === true"><i class="fa fa-circle-o-notch fa-spin"></i></span>
+              </button></td>
+
+              <ng-template #noteDisplay let-modal>
+                <div class="modal-header">
+                  <h4 class="modal-title">
+                    <span style="text-transform: capitalize">{{issue.type}}</span> by {{issue.guestName}}
+                  </h4>
+                  <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  {{issue.note}}
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-primary" (click)="modal.close()">Close</button>
+                </div>
+              </ng-template>
+
+            </tr>
+            </tbody>
+          </table>
+          <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+            <li class="page-item active">
+              <a class="page-link" href="#">1</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">4</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+          </ul>
+        </div>
+      </tab>
+      <tab>
+        <ng-template tabHeading><i class="fa fa-check-circle text-success"></i> Completed Room Service Requests</ng-template>
+        <div>
+          <table class="table table-responsive-sm table-responsive-md">
+            <thead>
+            <tr>
+              <th>Sn</th>
+              <th>Guest Name</th>
+              <th>Type</th>
+              <th>Note</th>
+              <th>Created DateTime</th>
+              <th>Resolved DateTime</th>
+              <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngIf="completedIssuesComments.length === 0" class="emptyRequest">
+              <td colspan="7">No completed issues or comments</td>
+            </tr>
+            <tr *ngFor="let issue of completedIssuesComments; let i = index">
+              <td>{{i+1}}</td>
+              <td *ngIf="issue.guestName !== null">
+                {{issue.guestName}}
+              </td>
+              <td *ngIf="issue.guestName === null">
+                Multiple Occupants
+              </td>
+              <td>{{issue.type}}</td>
+              <td *ngIf="issue.note.length <= 35">{{issue.note}}</td>
+              <td *ngIf="issue.note.length > 35">
+                {{(issue.note | slice:0: 35)+'...'}}
+                <span class="readMore" (click)="open(noteDisplay)">read more</span>
+              </td>
+              <td>{{issue.createdDateTime}}</td>
+              <td>{{issue.resolvedDateTime}}</td>
+              <td class="text-success">{{issue.statuss}}</td>
+
+              <ng-template #noteDisplay let-modal>
+                <div class="modal-header">
+                  <h4 class="modal-title">
+                    <span style="text-transform: capitalize">{{issue.type}}</span> by {{issue.guestName}}
+                  </h4>
+                  <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  {{issue.note}}
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-primary" (click)="modal.close()">Close</button>
+                </div>
+              </ng-template>
+            </tr>
+            </tbody>
+          </table>
+          <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+            <li class="page-item active">
+              <a class="page-link" href="#">1</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">4</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+          </ul>
+        </div>
+      </tab>
+    </tabset>
+  </div>
+</div>
+
+<ng-template #newIssueCommentForm let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">New Issue/Comment</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form #issueCommentForm="ngForm">
+      <div class="form-group">
+        <label for="roomNumber">Room Number</label>
+        <select id="roomNumber" class="form-control" [(ngModel)]="issueComment.roomId" #roomNumber="ngModel"
+                (change)="getGuestName()" name="roomNumber" required>
+          <option *ngFor="let room of checkedInRooms" [value]="room.roomId">Room {{room.roomNumber}}</option>
+          <option *ngIf="checkedInRooms.length === 0">
+            No checked in rooms
+          </option>
+        </select>
+        <div *ngIf="roomNumber.invalid && (roomNumber.dirty || roomNumber.touched) && roomNumber.errors.required"
+             class="validationError">
+          Room Number is required
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="name">Guest Name</label>
+        <input type="text" id="name" class="form-control" [(ngModel)]="issueComment.guestName" name="guestName" disabled>
+      </div>
+      <div class="form-group">
+        <label for="type">Type</label>
+        <select class="form-control" id="type" name="type" [(ngModel)]="issueComment.type" #type="ngModel" required>
+          <option value="issue">Issue</option>
+          <option value="comment">Comment</option>
+        </select>
+        <div *ngIf="type.invalid && (type.dirty || type.touched)" class="validationError">
+          <div *ngIf="type.errors.required">
+            Type is required
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="note">Note</label>
+        <textarea class="form-control" id="note" [(ngModel)]="issueComment.note" name="note"
+                  #note="ngModel" style="height: 80px" required></textarea>
+        <div *ngIf="note.invalid && (note.dirty || note.touched)" class="validationError">
+          <div *ngIf="note.errors.required">
+            Note is required
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="requestDate">Date</label>
+            <div class="input-group">
+              <input id="requestDate" class="form-control" placeholder="YYYY-MM-DD" name="dp" ngbDatepicker #d="ngbDatepicker"
+                     [(ngModel)]="date" #requestDate="ngModel" required [minDate]="minDate">
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button"><i class="fa fa-calendar"></i></button>
+              </div>
+            </div>
+            <div *ngIf="requestDate.invalid && (requestDate.dirty || requestDate.touched)" class="validationError">
+              <div *ngIf="requestDate.errors.required">
+                Date is required
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="requestTime">Time</label>
+            <ngb-timepicker id="requestTime" [meridian]="true" [spinners]="false" name="time"
+                            [(ngModel)]="time" #requestTime="ngModel" required></ngb-timepicker>
+            <div *ngIf="requestTime.invalid && (requestTime.dirty || requestTime.touched)" class="validationError">
+              <div *ngIf="requestTime.errors.required">
+                Time is required
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" [disabled]="issueCommentForm.invalid || processing" (click)="submitIssueComment()">
+      <span *ngIf="processing === false">Create</span>
+      <span *ngIf="processing === true"><i class="fa fa-circle-o-notch fa-spin"></i></span>
+    </button>
+  </div>
+</ng-template>
+

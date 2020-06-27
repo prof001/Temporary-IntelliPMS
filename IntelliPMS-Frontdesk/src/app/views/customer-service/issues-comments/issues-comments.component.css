@@ -1,0 +1,20 @@
+.fa-check-circle {
+  font-size: 17px;
+}
+
+#createIssueCommentDiv{
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+  padding-right: 15px;
+}
+
+.readMore {
+  text-decoration: underline;
+  color: #1765CB;
+}
+
+.readMore:hover {
+  cursor:pointer;
+  color: #2407CB;
+}

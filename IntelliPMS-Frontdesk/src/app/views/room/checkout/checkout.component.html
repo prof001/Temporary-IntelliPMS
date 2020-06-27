@@ -1,0 +1,82 @@
+<alert type="info" dismissible="true"  *ngIf="checkInChecker == true">
+  Guest successfully checked-in
+</alert>
+<alert type="info" dismissible="true"  *ngIf="checkOutChecker == true">
+  Guest successfully checked-out. Automated receipt has been sent to guest's email address.
+</alert>
+
+<div class="row filterDiv">
+  <select id="roomType" class="form-control" style="width: 20%" [(ngModel)]="roomType" (change)="roomTypeFilter()">
+    <option value="" disabled>Filter by</option>
+    <option *ngFor="let type of hotelRoomType" [value]="type.roomTypeId">{{type.roomTypeName}}</option>
+    <option value="all">See all rooms</option>
+  </select>
+</div>
+
+<div class="row" *ngIf="checkedInRooms.length > 0">
+  <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let room of checkedInRooms">
+    <div class="card">
+      <div class="card-header bg-dark" *ngIf="room.lostKey !== 'true'">
+        Room {{room.roomNumber}}
+        <button class="btn btn-secondary btn-sm pull-right" [routerLink]= "['/room/balance-bills', room.checkInId, room.roomId]">Checkout</button>
+      </div>
+      <div class="card-header pg-danger text-white" *ngIf="room.lostKey == 'true'">
+        Room {{room.roomNumber}}
+        <button class="btn btn-secondary btn-sm pull-right" [routerLink]= "['/room/balance-bills', room.checkInId, room.roomId]">Checkout</button>
+      </div>
+      <div class="roomCards">
+        <div class="firstFlex">
+          <div>
+            <div>
+              <span *ngIf="room.currentOccupant === null">Multiple Occupants</span>
+              <span *ngIf="room.currentOccupant != 0 && room.currentOccupant !== null">{{room.currentOccupant}}</span>
+            </div>
+            <div>
+              <span>{{room.roomStatus}} <span style="color: #BF0808" *ngIf="room.lostKey == 'true'">(Key Lost)</span></span>
+            </div>
+            <div>
+              <span>&#8358; {{room.cost | number}}</span>
+            </div>
+            <div>
+              <span style="text-transform: capitalize">{{room.roomTypeName}} Room</span>
+            </div>
+            <div>
+              <span style="color: #CA2012" *ngIf="room.daysLeft === -1">Time Elapsed</span>
+              <span style="color: #CA2012" *ngIf="room.daysLeft == 0">Today</span>
+              <span style="text-transform: capitalize; color: #CA2012" *ngIf="room.daysLeft == 2">{{room.daysLeft}} days left</span>
+              <span style="text-transform: capitalize; color: #CA2012" *ngIf="room.daysLeft == 1">{{room.daysLeft}} day left</span>
+              <span style="text-transform: capitalize; color: #149C5A" *ngIf="room.daysLeft > 2">{{room.daysLeft}} days left</span>
+            </div>
+          </div>
+          <div>
+            <span [class]="room.icon" [style.color]="'#2F353A'" [tooltip]="room.roomTypeName" style="font-size: 40px"></span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="progress progress-xs mt-3 mb-0">
+          <div class="progress-bar" style="background-color: #2F353A" role="progressbar" *ngIf="room.daysLeft > 2"
+               aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" [tooltip]="room.daysLeft + ' days left'">
+          </div>
+          <div class="progress-bar pg-danger" role="progressbar" *ngIf="room.daysLeft == -1"
+               aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" [tooltip]="'Time Elapsed'">
+          </div>
+          <div class="progress-bar pg-danger" role="progressbar" *ngIf="room.daysLeft == 2"
+               aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" [tooltip]="room.daysLeft + ' days left'">
+          </div>
+          <div class="progress-bar pg-danger" role="progressbar" *ngIf="room.daysLeft == 1"
+               aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" [tooltip]="room.daysLeft + ' day left'">
+          </div>
+          <div class="progress-bar pg-danger" role="progressbar" *ngIf="room.daysLeft == 0"
+               aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" [tooltip]="room.daysLeft + ' Today'">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="emptyPage" *ngIf="checkedInRooms.length === 0">
+  <div class="fa fa-folder-open-o"></div>
+  <div>No guest is currently checked in</div>
+</div>

@@ -1,0 +1,76 @@
+<alert type="success" dismissible="true" *ngIf="showSuccessAlert === true" (onClose)="onAlertClosed()">
+  Password updated successfully!
+</alert>
+
+<div class="card">
+  <div class="card-header">
+    Employees
+  </div>
+  <div class="card-body">
+    <table class="table table-responsive-sm table-responsive-md">
+      <thead>
+      <tr>
+        <th class="handleBorder">Employee Name</th>
+        <th class="handleBorder">Role</th>
+        <th class="handleBorder">Gender</th>
+        <th class="handleBorder">Email</th>
+        <th class="handleBorder">Phone Number</th>
+        <th class="handleBorder"></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let employee of employees">
+        <td>{{employee.lastName}} {{employee.firstName}}</td>
+        <td>{{employee.employeeRole}}</td>
+        <td>{{employee.gender}}</td>
+        <td>{{employee.emailAddress}}</td>
+        <td>{{employee.phoneNumber}}</td>
+        <td *ngIf="employee.statuss === 'enabled'">
+          <button class="btn btn-primary" (click)="open(resetPassword)">Reset Password</button>
+          <button class="btn pg-danger text-white" (click)="updateLoginAccess(employee.employeeId, 'disabled')">Disable</button>
+        </td>
+        <td *ngIf="employee.statuss === 'disabled'">
+          <button class="btn btn-primary" (click)="open(resetPassword)">Reset Password</button>
+          <button class="btn btn-success text-white" (click)="updateLoginAccess(employee.employeeId, 'enabled')">Enable</button>
+        </td>
+        <ng-template #resetPassword let-modal>
+          <div class="modal-header">
+            <h4 class="modal-title">Reset Password</h4>
+            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form #passwordForm="ngForm" [appMatchPassword]="['password', 'confirmPassword']">
+              <div class="form-group">
+                <label for="password1">New Password</label>
+                <input type="password" id="password1" class="form-control" name="password" [(ngModel)]="password1" #password="ngModel" required>
+                <div class="validationError" *ngIf="(password.dirty || password.touched) && password.invalid">
+                  <div *ngIf="password.errors.required">
+                    New password required
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="password2">Confirm Password</label>
+                <input type="password" id="password2" class="form-control" name="confirmPassword" [(ngModel)]="password2" #confirmPassword="ngModel" required>
+                <div class="validationError" *ngIf="(confirmPassword.dirty || confirmPassword.touched) && confirmPassword.invalid">
+                  <div *ngIf="confirmPassword.errors.required">
+                    Confirm password required
+                  </div>
+                  <div *ngIf="confirmPassword.errors.passwordMismatch">
+                    Passwords does not match
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" [disabled]="passwordForm.invalid" (click)="resetEmployeePassword(employee.employeeId)">Save</button>
+          </div>
+        </ng-template>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

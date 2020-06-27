@@ -1,0 +1,33 @@
+#createHouseKeepingDiv {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+  padding-right: 15px;
+}
+
+.fa-calendar {
+  color: #444444;
+}
+
+.serviceTotal {
+  font-weight: 600;
+}
+
+.viewItemSpan {
+  color: #013eb0;
+}
+
+.viewItemSpan:hover {
+  text-decoration: underline;
+  color: #013586;
+}
+
+.itemListUl {
+  list-style-type: disc;
+  line-height: 30px;
+  font-size: 15px;
+}
+
+.emptyDropdown {
+  color: #BF0808;
+}

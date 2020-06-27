@@ -1,0 +1,100 @@
+.headerBanner {
+  background-color: #2f353a;
+  height: 80px;
+  width: 25%;
+  margin: 35px 50px 0 0;
+  padding-left: 30px;
+  display: flex;
+  align-items: center;
+}
+.headerBanner .amount {
+  color: white;
+  font-size: 30px;
+}
+.headerBanner .errorAmount {
+  color: #ca2012;
+  font-size: 30px;
+}
+
+.mainDiv {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+.infoDiv {
+  margin-top: 40px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: 70%;
+}
+.infoDetailsDiv {
+  background-color: white;
+  line-height: 35px;
+  padding: 10px 20px;
+  width: 100%;
+  box-shadow: 7px 7px 6px -4px #b9bcbf;
+}
+.infoDetailsDiv div {
+  display: flex;
+  justify-content: space-between;
+}
+.infoHeadingDiv {
+  align-self: flex-start;
+  font-size: 20px;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+.pageTitle {
+  font-size: 30px;
+  font-weight: 700;
+}
+.pageTitleDiv {
+  display: flex;
+  justify-content: center;
+}
+hr {
+  margin: 0 1px;
+}
+.totalDiv {
+  font-weight: 700;
+  font-size: 16px;
+}
+.btnDark {
+  background-color: #2f353a;
+  color: white;
+  margin-bottom: 25px;
+}
+.btnDark:hover {
+  background-color: #0c0e0f;
+  color: white;
+}
+
+.btnDiv {
+  display: flex;
+  justify-content: flex-end;
+  margin: 30px 50px;
+}
+.btnPrimary {
+  margin-bottom: 25px;
+  margin-right: 15px;
+  font-size: 16px;
+}
+.billingsDiv {
+  width: 100%;
+}
+.icon-wallet {
+  font-size: 30px;
+  transform: rotate(160deg);
+  margin-right: 10px;
+}
+
+.bankDetails {
+  display: none;
+}
+
+.registerErrorDiv {
+  align-self: flex-start;
+}
+

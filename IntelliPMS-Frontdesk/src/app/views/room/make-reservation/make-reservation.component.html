@@ -1,0 +1,444 @@
+<form #roomInfoForm="ngForm">
+  <div class="row centred">
+    <div class="col-md-9">
+      <div class="card">
+        <div class="card-header">
+          <strong>Room Information</strong>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-sm-8">
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label for="startDate">Start Date<span class="compulsory">*</span></label>
+                    <div class="input-group">
+                      <input class="form-control" placeholder="YYYY-MM-DD" id="startDate" [minDate]="minDate1"
+                             name="dp" [(ngModel)]="startDate" ngbDatepicker #d="ngbDatepicker" required>
+                      <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" (click)="d.toggle()" (focusout)="updateStartDate()" type="button"><i class="fa fa-calendar"></i></button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <label for="endDate">End Date<span class="compulsory">*</span></label>
+                  <div class="input-group">
+                    <input class="form-control" placeholder="YYYY-MM-DD" id="endDate" [minDate]="minDate2"
+                           name="dp" [(ngModel)]="endDate" ngbDatepicker #de="ngbDatepicker" required>
+                    <div class="input-group-append">
+                      <button class="btn btn-outline-secondary" (click)="de.toggle()" type="button"><i class="fa fa-calendar"></i></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label>Start Time<span class="compulsory">*</span></label>
+                    <div class="input-group">
+                      <ngb-timepicker [(ngModel)]="startTime" [meridian]="meridian" [spinners]="spinners" name="startTime"
+                      required></ngb-timepicker>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label>End Time</label>
+                    <div class="input-group">
+                      <ngb-timepicker [(ngModel)]="endTime" [meridian]="meridian" [spinners]="spinners" disabled name="endTime"></ngb-timepicker>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-4 availableRoomsDiv">
+              <div>ROOM AVAILABILITY SUMMARY</div>
+              <div>
+                <ul>
+                  <li style="text-transform: capitalize" *ngFor="let type of availableRoomsSummary">
+                    <span *ngIf="type.totalAvailable == 1">
+                      {{type.roomTypeName}}: {{type.totalAvailable}} Room
+                    </span>
+                    <span *ngIf="type.totalAvailable > 1 || type.totalAvailable == 0">
+                      {{type.roomTypeName}}: {{type.totalAvailable}} Rooms
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-3">
+              <div class="form-group">
+                <label for="roomType">Room Type<span class="compulsory">*</span></label>
+                <div class="input-group">
+                  <select id="roomType" class="form-control" [(ngModel)]="reservationInfo.roomTypeId" #roomType="ngModel"
+                          name="roomType" required>
+                    <option *ngFor="let type of hotelRoomTypes" [value]="type.roomTypeId">{{type.roomTypeName}}</option>
+                  </select>
+                </div>
+                <div *ngIf="roomType.invalid && (roomType.dirty || roomType.touched) && roomType.errors.required" class="validationError">
+                  Room Type is required
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label for="numOfRooms">Number of Rooms<span class="compulsory">*</span></label>
+                <div class="input-group">
+                  <input type="number" class="form-control" id="numOfRooms" required #numOfRooms="ngModel"
+                         [(ngModel)]="reservationInfo.numOfRooms" name="numOfRooms">
+                </div>
+                <div *ngIf="numOfRooms.invalid && (numOfRooms.dirty || numOfRooms.touched) && numOfRooms.errors.required" class="validationError">
+                  Number of Rooms required
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label for="adultsPerRoom">Adults Per Room<span class="compulsory">*</span></label>
+                <div class="input-group">
+                  <input type="number" class="form-control" id="adultsPerRoom" required #adultsPerRoom="ngModel"
+                         [(ngModel)]="reservationInfo.adultsPerRoom" name="adultsPerRoom">
+                </div>
+                <div *ngIf="adultsPerRoom.invalid && (adultsPerRoom.dirty || adultsPerRoom.touched) && adultsPerRoom.errors.required" class="validationError">
+                  Adults per room required
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label for="childrenPerRoom">Children Per Room<span class="compulsory">*</span></label>
+                <div class="input-group">
+                  <input type="number" class="form-control" id="childrenPerRoom" required #childrenPerRoom="ngModel"
+                         [(ngModel)]="reservationInfo.childrenPerRoom" name="childrenPerRoom">
+                </div>
+                <div *ngIf="childrenPerRoom.invalid && (childrenPerRoom.dirty || childrenPerRoom.touched) && childrenPerRoom.errors.required" class="validationError">
+                  Children per room is required
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<div class="row centred">
+  <div class="col-sm-9">
+    <div class="card">
+      <div class="card-header">
+        <strong>Paying Guest's Information</strong>
+      </div>
+      <div class="card-body">
+        <form #payingGuestForm="ngForm">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="phone">Phone Number<span class="compulsory">*</span></label>
+                <input type="text" id="phone" name="phone" [(ngModel)]="payingGuestInfo.phoneNumber" required
+                       class="form-control" placeholder="Enter phone number" #phoneNumber="ngModel" appPhoneNumber
+                       (keyup)="getPhoneNumberSuggestions($event)" autocomplete="doNotAutoComplete">
+                <div *ngIf="phoneNumber.invalid && (phoneNumber.dirty || phoneNumber.touched)" class="validationError">
+                  <div *ngIf="phoneNumber.errors.required">
+                    Phone number is required
+                  </div>
+                  <div *ngIf="phoneNumber.errors.invalidPhoneNumber">
+                    Value must be only numbers
+                  </div>
+                </div>
+                <div class="autocomplete" *ngIf="phoneNumberList.length > 0" [style.display]="autocompleteDivDisplay">
+                  <ul>
+                    <li *ngFor="let number of phoneNumberList" (click)="autoCompleteListClicked(number.phoneNumber)">
+                      <div class="phoneNumDiv">{{number.phoneNumber}}</div>
+                      <div class="fullNameDiv">{{number.guestName}}</div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="email">Email<span class="compulsory">*</span></label>
+                <input type="email" id="email" name="email" [(ngModel)]="payingGuestInfo.email" required #email="ngModel"
+                       class="form-control" placeholder="Enter email" appEmail>
+                <div *ngIf="email.invalid && (email.dirty || email.touched)" class="validationError">
+                  <div *ngIf="email.errors.required">
+                    Email address is required
+                  </div>
+                  <div *ngIf="email.errors.invalidEmail">
+                    Email format not valid
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="title">Name<span class="compulsory">*</span></label>
+            <div class="row">
+              <div class="col-sm-2">
+                <select
+                  [(ngModel)]="payingGuestInfo.guestTitle" #guestTitle="ngModel" required class="form-control" id="title" name="title">
+                  <option value="Mr">Mr</option>
+                  <option value="Miss">Miss</option>
+                  <option value="Mrs">Mrs</option>
+                  <option value="Chief">Chief</option>
+                </select>
+                <div *ngIf="guestTitle.invalid && (guestTitle.dirty || guestTitle.touched) && guestTitle.errors.required" class="validationError">
+                  Title is required
+                </div>
+              </div>
+              <div class="col-sm-10">
+                <div class="form-group">
+                  <div class="row">
+                    <div class="col-sm-4 col-md-4">
+                      <input
+                        type="text"
+                        [(ngModel)]="payingGuestInfo.firstName"
+                        name="firstName"
+                        placeholder="First name*"
+                        class="form-control"
+                        #firstName="ngModel"
+                        required
+                      >
+                      <div *ngIf="firstName.invalid && (firstName.dirty || firstName.touched) && firstName.errors.required" class="validationError">
+                        First name is required
+                      </div>
+                    </div>
+                    <div class="col-sm-4 col-md-4">
+                      <input
+                        type="text" [(ngModel)]="payingGuestInfo.otherName" name="otherName" placeholder="Other name" class="form-control">
+                    </div>
+                    <div class="col-sm-4 col-md-4">
+                      <input
+                        type="text"
+                        [(ngModel)]="payingGuestInfo.lastName"
+                        name="lastName"
+                        placeholder="Last name*"
+                        class="form-control"
+                        #lastName="ngModel"
+                        required
+                      >
+                      <div *ngIf="lastName.invalid && (lastName.dirty || lastName.touched) && lastName.errors.required" class="validationError">
+                        Last name is required
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label for="gender">Gender<span class="compulsory">*</span></label>
+                <select required class="form-control" id="gender" name="gender"
+                        #gender="ngModel" [(ngModel)]="payingGuestInfo.gender">
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+                <div *ngIf="gender.invalid && (gender.dirty || gender.touched) && gender.errors.required" class="validationError">
+                  Gender is required
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label>Country<span class="compulsory">*</span></label>
+                <select class="form-control" name="country" [(ngModel)]="payingGuestInfo.country" required #country="ngModel">
+                  <option *ngFor="let country of countryList">{{country}}</option>
+                </select>
+                <div *ngIf="country.invalid && (country.dirty || country.touched) && country.errors.required" class="validationError">
+                  Country is required
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="address">Address<span class="compulsory">*</span></label>
+            <textarea
+              id="address" class="form-control" [(ngModel)]="payingGuestInfo.address" name = "address"
+              style="height: 100px" required #address="ngModel" placeholder="Enter your address">
+            </textarea>
+            <div *ngIf="address.invalid && (address.dirty || address.touched) && address.errors.required" class="validationError">
+              Address is required
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<form class="form-group" [formGroup]="billingForm">
+  <div class="row centred">
+    <div class="col-md-9" formArrayName="paymentDetails">
+      <div *ngFor="let _ of paymentForm.controls; let i=index">
+        <div class="card">
+          <div class="card-header">
+            <strong>
+              Make Payment <span *ngIf = "paymentForm.controls.length > 1">{{i+1}}</span>
+            </strong>
+            <span *ngIf="paymentForm.controls.length > 1"
+                  (click)="removePayment(i)" class="pull-right removeForm">Remove
+                  </span>
+          </div>
+          <div class="card-body" [formGroupName]="i">
+            <div class="form-group">
+              <label class="col-form-label">Payment Method</label>
+              <div class="col-form-label">
+                <div class="form-check form-check-inline mr-3">
+                  <input class="form-check-input" type="radio" formControlName="paymentType"
+                         id="card" value="card" (click)="togglePaymentForm(0, i)">
+                  <label class="form-check-label" for="card">Card</label>
+                </div>
+                <div class="form-check form-check-inline mr-3">
+                  <input class="form-check-input" type="radio" formControlName="paymentType"
+                         id="transfer" value="transfer" (click)="togglePaymentForm(1, i)">
+                  <label class="form-check-label" for="cash">Transfer</label>
+                </div>
+                <div class="form-check form-check-inline mr-3">
+                  <input class="form-check-input" type="radio" formControlName="paymentType"
+                         id="cash" value="cash" (click)="togglePaymentForm(2, i)">
+                  <label class="form-check-label" for="cash">Cash</label>
+                </div>
+                <div class="form-check form-check-inline mr-3">
+                  <input class="form-check-input" type="radio" formControlName="paymentType"
+                         id="managerCredit" value="Manager Credit" (click)="togglePaymentForm(3, i)">
+                  <label class="form-check-label" for="cash">Manager Credit</label>
+                </div>
+              </div>
+            </div>
+
+            <div [style.display]="inputsDisplay[i].showCardInput">
+              <div class="form-group">
+                <label for="bank">Bank<span class="compulsory">*</span></label>
+                <select id="bank" (change)="bankPosClicked($event.target, i)" formControlName="bankName" class="form-control">
+                  <option *ngFor="let pos of hotelPosDetails" [value]="pos.posSn">
+                    {{pos.bankName}}
+                  </option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Pos Id<span class="compulsory">*</span></label>
+                <div class="accountDisplayDiv">
+                  <span class="accountDisplayText" *ngIf="paymentChoices.length > i">{{paymentChoices[i].cardPayment.posId}}</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="transactionId">Transaction Id<span class="compulsory">*</span></label>
+                <input type="text" id="transactionId" formControlName="transactionId"
+                       class="form-control" placeholder="Enter transaction Id">
+              </div>
+              <div class="form-group">
+                <label for="amount1">Amount<span class="compulsory">*</span></label>
+                <input type="number" id="amount1" formControlName="amount" class="form-control" placeholder="Enter Amount">
+                <div class="unOpenedRegisterDiv" *ngIf="registerId === null">
+                  <span class="fa fa-times-circle"></span>
+                  Please open a cash register.
+                </div>
+                <div class="unOpenedRegisterDiv" *ngIf="registerHourExceeded">
+                  <span class="fa fa-times-circle"></span>
+                  Opened cash register has exceeded 24 hours. Please open another one.
+                </div>
+              </div>
+            </div>
+            <div [style.display]="inputsDisplay[i].showCashInput">
+              <div class="form-group">
+                <label for="amount2">Amount<span class="compulsory">*</span></label>
+                <input type="number" id="amount2" formControlName="amount" class="form-control" placeholder="Enter Amount">
+                <div class="unOpenedRegisterDiv" *ngIf="registerId === null">
+                  <span class="fa fa-times-circle"></span>
+                  Please open a cash register.
+                </div>
+                <div class="unOpenedRegisterDiv" *ngIf="registerHourExceeded">
+                  <span class="fa fa-times-circle"></span>
+                  Opened cash register has exceeded 24 hours. Please open another one.
+                </div>
+              </div>
+            </div>
+            <div [style.display]="inputsDisplay[i].showTransferInput">
+              <div class="form-group">
+                <label for="bank2">Bank<span class="compulsory">*</span></label>
+                <select id="bank2" (change)="bankAccountClicked($event.target, i)" formControlName="bankName" class="form-control">
+                  <option *ngFor="let account of hotelAccountDetails" [value]="account.bankAccountId">
+                    {{account.bankName}}
+                  </option>
+                </select>
+                <!--<div *ngIf="bank2.invalid && (bank2.dirty || bank2.touched) && bank2.errors.required" class="validationError">
+                  Bank is required
+                </div>-->
+              </div>
+              <div class="form-group">
+                <label>Account Number<span class="compulsory">*</span></label>
+                <div class="accountDisplayDiv">
+                  <span class="accountDisplayText" *ngIf="paymentChoices.length > i">{{paymentChoices[i].transferPayment.accountNumber}}</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="transactionId2">Transaction Id<span class="compulsory">*</span></label>
+                <input type="text" id="transactionId2" class="form-control" formControlName="transactionId" placeholder="Enter transaction Id">
+                <!--<div *ngIf="transactionId2.invalid && (transactionId2.dirty || transactionId2.touched) && transactionId2.errors.required" class="validationError">
+                  Transaction ID is required
+                </div>-->
+              </div>
+              <div class="form-group">
+                <label for="amount3">Amount<span class="compulsory">*</span></label>
+                <input type="number" id="amount3" formControlName="amount" class="form-control" placeholder="Enter Amount">
+                <div class="unOpenedRegisterDiv" *ngIf="registerId === null">
+                  <span class="fa fa-times-circle"></span>
+                  Please open a cash register.
+                </div>
+                <div class="unOpenedRegisterDiv" *ngIf="registerHourExceeded">
+                  <span class="fa fa-times-circle"></span>
+                  Opened cash register has exceeded 24 hours. Please open another one.
+                </div>
+              </div>
+            </div>
+            <div [style.display]="inputsDisplay[i].showManagerInput">
+              <div class="form-group">
+                <label for="managerName">Manager Name<span class="compulsory">*</span></label>
+                <select id="managerName" formControlName="managerName" class="form-control">
+                  <option *ngFor="let manager of managers" [value]="manager.employeeId">{{manager.employeeName}}</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="referenceNumber">Reference Number<span class="compulsory">*</span></label>
+                <input type="text" id="referenceNumber" class="form-control" formControlName="referenceNumber" placeholder="Enter Reference Number">
+              </div>
+              <div class="form-group">
+                <label for="amount4">Amount<span class="compulsory">*</span></label>
+                <input type="number" id="amount4" formControlName="amount" class="form-control" placeholder="Enter Amount">
+                <div class="unOpenedRegisterDiv" *ngIf="registerId === null">
+                  <span class="fa fa-times-circle"></span>
+                  Please open a cash register.
+                </div>
+                <div class="unOpenedRegisterDiv" *ngIf="registerHourExceeded">
+                  <span class="fa fa-times-circle"></span>
+                  Opened cash register has exceeded 24 hours. Please open another one.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-bottom: 12px">
+        <div (click)="addPayment()" class="addFormDiv">
+          <span class="icon-plus font-lg"></span>
+          <span class="addForm">Add new billing detail</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<div class="float-right" id="submitBtnDiv">
+  <button class="btn btn-lg btn-primary" [disabled]="roomInfoForm.invalid || payingGuestForm.invalid || processing || registerId === null || registerHourExceeded"
+          (click)="makeReservation()">
+    <span *ngIf="processing === false">Make Reservation</span>
+    <span *ngIf="processing === true"><i class="fa fa-circle-o-notch fa-spin"></i></span>
+  </button>
+</div>

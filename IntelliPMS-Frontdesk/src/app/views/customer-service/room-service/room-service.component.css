@@ -1,0 +1,12 @@
+.fa-check-circle {
+  font-size: 17px;
+}
+
+#createRoomServiceDiv {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+  padding-right: 15px;
+}
+
+

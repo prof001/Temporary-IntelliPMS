@@ -1,0 +1,86 @@
+#footerCheckbox {
+  padding-bottom: 0;
+}
+
+#totalBill {
+  font-size: 26px;
+  color: #B7463E;
+  margin-right: 15px;
+}
+
+#checkinSummaryCard {
+  padding-bottom: 0;
+  padding-left: 11%;
+}
+
+#summaryDivCheckbox {
+  font-size: 15px;
+}
+
+#summaryDiv {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding-bottom: 0;
+  margin-bottom: 0;
+  z-index: 3;
+}
+
+#subSummaryDiv {
+  margin-bottom: 70px;
+}
+
+#footerCheckbox {
+  display: flex;
+  justify-content: space-between;
+}
+
+.roomPickerCard table tr:nth-child(1) td {
+  border-top: none;
+  margin-top: 0;
+  paddding-bottom: 0;
+  padding-top: 0;
+}
+
+.roomPickerCard .card-body {
+  max-height: 300px;
+  overflow: auto;
+}
+
+#pickRoomBtn {
+  margin-top: 8px;
+}
+
+.paymentInfo {
+  color: #28623c;
+  font-size: 13px;
+  margin-left: 2px;
+}
+
+.paymentError {
+  color: #BF0808;
+  font-size: 13px;
+  margin-left: 2px;
+}
+
+card {
+  cursor:pointer;
+}
+
+.billingInfoDiv tr td:nth-child(1) {
+  width:70%
+}
+
+table.billingInfoDiv {
+  line-height: 27px;
+}
+
+hr {
+  width: 140%
+}
+
+.billingInfoDiv tr{
+  line-height: 30px;
+}
+

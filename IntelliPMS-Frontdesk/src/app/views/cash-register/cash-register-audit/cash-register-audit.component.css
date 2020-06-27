@@ -1,0 +1,49 @@
+#intro {
+  background-color: #262A2E;;
+  margin: 13px 0;
+  padding: 15px 10px;
+  color: white;
+}
+
+table {
+  margin-top: 35px;
+  background-color: white;
+}
+
+tfoot {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.billCardTableDiv {
+  margin: 0 15px;
+}
+
+.billCardTableDiv table {
+  width: 100%;
+  line-height: 25px;
+}
+
+hr {
+  width:150%
+}
+
+.billCardDateDiv {
+  display: flex;
+  justify-content: space-between;
+  padding: 3px 15px;
+}
+
+.billCardDateDiv * {
+  font-weight: 500;
+}
+
+.billOwner {
+  font-size: 19px;
+  font-weight: 700;
+  padding-bottom: 10px;
+}
+
+.displayer {
+  text-transform: capitalize;
+}

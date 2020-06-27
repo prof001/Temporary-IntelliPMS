@@ -1,0 +1,403 @@
+<form [formGroup]="guestsForm">
+  <div class="row centred">
+    <div class="col-md-9" formArrayName="guestDetails">
+      <div *ngFor="let _ of guestForm.controls; let i=index">
+        <div class="card">
+          <div class="card-header">
+            <strong>Guest Information <span *ngIf = "guestForm.controls.length > 1">{{i+1}}</span></strong>
+            <span *ngIf="guestForm.controls.length > 1"
+                  (click)="removeGuest(i)" class="pull-right removeForm">Remove
+                  </span>
+          </div>
+          <div class="card-body" [formGroupName]="i">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="phone">Phone<span class="compulsory">*</span></label>
+                  <input type="text" id="phone" class="form-control" formControlName="phoneNumber"
+                         (keyup)="getPhoneNumberSuggestions($event, i)" autocomplete="doNotAutoComplete" required>
+                  <div class="validationError" *ngIf="(guestForm.controls[i].get('phoneNumber').dirty || guestForm.controls[i].get('phoneNumber').touched) &&
+                    guestForm.controls[i].get('phoneNumber').invalid">
+                    <div *ngIf="guestForm.controls[i].get('phoneNumber').errors.required">
+                      Phone number is required
+                    </div>
+                    <div *ngIf="guestForm.controls[i].get('phoneNumber').errors.pattern">
+                      Value must be only numbers
+                    </div>
+                  </div>
+                  <div class="autocomplete" *ngIf="phoneNumberList.length > 0" [style.display]="autocompletes[i].divDisplay">
+                    <ul>
+                      <li *ngFor="let number of phoneNumberList" (click)="autoCompleteListClicked(number.phoneNumber, i)">
+                        <div class="phoneNumDiv">{{number.phoneNumber}}</div>
+                        <div class="fullNameDiv">{{number.guestName}}</div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="email">Email<span class="compulsory">*</span></label>
+                  <input type="email" id="email" class="form-control" formControlName="email" required>
+                  <div class="validationError" *ngIf="(guestForm.controls[i].get('email').dirty || guestForm.controls[i].get('email').touched) &&
+                    guestForm.controls[i].get('email').invalid">
+                    <div *ngIf="guestForm.controls[i].get('email').errors.required">
+                      Email Address is required
+                    </div>
+                    <div *ngIf="guestForm.controls[i].get('email').errors.pattern">
+                      This is not a valid email
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="title">Name<span class="compulsory">*</span></label>
+              <div class="row">
+                <div class="col-sm-2">
+                  <select required class="form-control" id="title" formControlName="guestTitle">
+                    <option value="Mr">Mr</option>
+                    <option value="Miss">Miss</option>
+                    <option value="Mrs">Mrs</option>
+                    <option value="Chief">Chief</option>
+                  </select>
+                  <div class="validationError" *ngIf="(guestForm.controls[i].get('guestTitle').dirty || guestForm.controls[i].get('guestTitle').touched) &&
+                    guestForm.controls[i].get('guestTitle').invalid && guestForm.controls[i].get('guestTitle').errors.required">
+                    Guest title empty
+                  </div>
+                </div>
+                <div class="col-sm-10">
+                  <div class="form-group">
+                    <div class="row">
+                      <div class="col-sm-4 col-md-4">
+                        <input
+                          type="text"
+                          placeholder="First name*"
+                          class="form-control"
+                          required
+                          formControlName="firstName"
+                        >
+                        <div class="validationError" *ngIf="(guestForm.controls[i].get('firstName').dirty || guestForm.controls[i].get('firstName').touched) &&
+                        guestForm.controls[i].get('firstName').invalid">
+                          <div *ngIf="guestForm.controls[i].get('firstName').errors.required">
+                            First name is required
+                          </div>
+                          <div *ngIf="guestForm.controls[i].get('firstName').errors.pattern">
+                            Value must be letters only
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-sm-4 col-md-4">
+                        <input
+                          type="text" placeholder="Other name" class="form-control" formControlName="otherName">
+                        <div class="validationError" *ngIf="(guestForm.controls[i].get('otherName').dirty || guestForm.controls[i].get('otherName').touched) &&
+                        guestForm.controls[i].get('otherName').invalid">
+                          <div *ngIf="guestForm.controls[i].get('otherName').errors.pattern">
+                            Value must be letters only
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-sm-4 col-md-4">
+                        <input
+                          type="text"
+                          placeholder="Last name*"
+                          class="form-control"
+                          formControlName="lastName"
+                          required>
+                        <div class="validationError" *ngIf="(guestForm.controls[i].get('lastName').dirty || guestForm.controls[i].get('lastName').touched) &&
+                        guestForm.controls[i].get('lastName').invalid">
+                          <div *ngIf="guestForm.controls[i].get('lastName').errors.required">
+                            LastName is required
+                          </div>
+                          <div *ngIf="guestForm.controls[i].get('lastName').errors.pattern">
+                            Value must be letters only
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="gender">Gender<span class="compulsory">*</span></label>
+                  <select id="gender" required class="form-control" formControlName="gender">
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </select>
+                  <div class="validationError" *ngIf="(guestForm.controls[i].get('gender').dirty || guestForm.controls[i].get('gender').touched) &&
+                        guestForm.controls[i].get('gender').invalid && guestForm.controls[i].get('gender').errors.required">
+                    Gender is required
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label for="country">Country<span class="compulsory">*</span></label>
+                <select id="country" required class="form-control" formControlName="country">
+                  <option *ngFor="let country of countryList" [value]="country">{{country}}</option>
+                </select>
+                <div class="validationError" *ngIf="(guestForm.controls[i].get('country').dirty || guestForm.controls[i].get('country').touched) &&
+                        guestForm.controls[i].get('country').invalid && guestForm.controls[i].get('country').errors.required">
+                  Country is required
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label for="customer">Guest Type</label>
+                <select id="customer" required class="form-control" formControlName="guestType">
+                  <option value="1">Paying Guest</option>
+                  <option value="2">Staying Guest</option>
+                  <option value="3">Paying and Staying Guest</option>
+                </select>
+                <div class="validationError" *ngIf="(guestForm.controls[i].get('country').dirty || guestForm.controls[i].get('country').touched) &&
+                        guestForm.controls[i].get('country').invalid && guestForm.controls[i].get('country').errors.required">
+                  Country is required
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="address">Address<span class="compulsory">*</span></label>
+              <textarea id="address" required class="form-control" style="height: 100px" formControlName="address"></textarea>
+              <div class="validationError" *ngIf="(guestForm.controls[i].get('address').dirty || guestForm.controls[i].get('address').touched) &&
+                        guestForm.controls[i].get('address').invalid && guestForm.controls[i].get('address').errors.required">
+                Address is required
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom: 30px">
+          <div (click)="addGuest()" class="addFormDiv">
+            <span class="icon-plus font-lg"></span>
+            <span class="addForm">Add another guest information</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<div class="row centred">
+  <div class="col-md-9">
+    <div class="card">
+      <div class="card-header">
+        <strong>Billing Information</strong>
+      </div>
+      <div class="card-body">
+        <table class="billingInfoDiv">
+          <tr>
+            <td>Selected Room:</td>
+            <td>Room {{selectedRoom.roomNumber}}</td>
+          </tr>
+          <tr>
+            <td>Room Cost:</td>
+            <td>&#8358; {{selectedRoom.cost | number}} * {{daysNum}}</td>
+          </tr>
+          <tr>
+            <td>Security:</td>
+            <td>&#8358; 2,000</td>
+          </tr>
+          <hr/>
+          <tr>
+            <td>Total:</td>
+            <td>&#8358; {{totalPaymentDue | number}}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<form class="form-group" [formGroup]="billingForm">
+  <div class="row centred">
+    <div class="col-md-9" formArrayName="paymentDetails">
+      <div *ngFor="let _ of paymentForm.controls; let i=index">
+        <div class="card">
+          <div class="card-header">
+            <strong>
+              Make Payment <span *ngIf = "paymentForm.controls.length > 1">{{i+1}}</span>
+            </strong>
+            <span *ngIf="paymentForm.controls.length > 1"
+                  (click)="removePayment(i)" class="pull-right removeForm">Remove
+                  </span>
+          </div>
+          <div class="card-body" [formGroupName]="i">
+            <div class="form-group">
+              <label class="col-form-label">Payment Method</label>
+              <div class="col-form-label">
+                <div class="form-check form-check-inline mr-3">
+                  <input class="form-check-input" type="radio" formControlName="paymentType"
+                         id="card" value="card" (click)="togglePaymentForm(0, i)">
+                  <label class="form-check-label" for="card">Card</label>
+                </div>
+                <div class="form-check form-check-inline mr-3">
+                  <input class="form-check-input" type="radio" formControlName="paymentType"
+                         id="transfer" value="transfer" (click)="togglePaymentForm(1, i)">
+                  <label class="form-check-label" for="cash">Transfer</label>
+                </div>
+                <div class="form-check form-check-inline mr-3">
+                  <input class="form-check-input" type="radio" formControlName="paymentType"
+                         id="cash" value="cash" (click)="togglePaymentForm(2, i)">
+                  <label class="form-check-label" for="cash">Cash</label>
+                </div>
+                <div class="form-check form-check-inline mr-3">
+                  <input class="form-check-input" type="radio" formControlName="paymentType"
+                         id="managerCredit" value="Manager Credit" (click)="togglePaymentForm(3, i)">
+                  <label class="form-check-label" for="cash">Manager Credit</label>
+                </div>
+              </div>
+            </div>
+
+            <div [style.display]="inputsDisplay[i].showCardInput">
+              <div class="form-group">
+                <label for="bank">Bank<span class="compulsory">*</span></label>
+                <select id="bank" (change)="bankPosClicked($event.target, i)" formControlName="bankName" class="form-control" required>
+                  <option *ngFor="let pos of hotelPosDetails" [value]="pos.posSn">
+                    {{pos.bankName}}
+                  </option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Pos Id<span class="compulsory">*</span></label>
+                <div class="accountDisplayDiv">
+                  <span class="accountDisplayText" *ngIf="paymentChoices.length > i">{{paymentChoices[i].cardPayment.posId}}</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="transactionId">Transaction Id<span class="compulsory">*</span></label>
+                <input type="text" id="transactionId" formControlName="transactionId"
+                       class="form-control" placeholder="Enter transaction Id">
+              </div>
+              <div class="form-group">
+                <label for="amount1">Amount<span class="compulsory">*</span></label>
+                <input type="number" id="amount1" formControlName="amount" class="form-control" placeholder="Enter Amount"
+                       (keyup)="getTotalAmountPaid()">
+                <div class="unOpenedRegisterDiv" *ngIf="registerId === null">
+                  <span class="fa fa-times-circle"></span>
+                  Please open a cash register.
+                </div>
+                <div class="unOpenedRegisterDiv" *ngIf="registerHourExceeded">
+                  <span class="fa fa-times-circle"></span>
+                  Opened cash register has exceeded 24 hours. Please open another one.
+                </div>
+              </div>
+            </div>
+            <div [style.display]="inputsDisplay[i].showCashInput">
+              <div class="form-group">
+                <label for="amount2">Amount<span class="compulsory">*</span></label>
+                <input type="number" id="amount2" formControlName="amount" class="form-control" placeholder="Enter Amount"
+                       (keyup)="getTotalAmountPaid()">
+                <div class="unOpenedRegisterDiv" *ngIf="registerId === null">
+                  <span class="fa fa-times-circle"></span>
+                  Please open a cash register.
+                </div>
+                <div class="unOpenedRegisterDiv" *ngIf="registerHourExceeded">
+                  <span class="fa fa-times-circle"></span>
+                  Opened cash register has exceeded 24 hours. Please open another one.
+                </div>
+              </div>
+            </div>
+            <div [style.display]="inputsDisplay[i].showTransferInput">
+              <div class="form-group">
+                <label for="bank2">Bank<span class="compulsory">*</span></label>
+                <select id="bank2" (change)="bankAccountClicked($event.target, i)" formControlName="bankName" class="form-control">
+                  <option *ngFor="let account of hotelAccountDetails" [value]="account.bankAccountId">
+                    {{account.bankName}}
+                  </option>
+                </select>
+                <!--<div *ngIf="bank2.invalid && (bank2.dirty || bank2.touched) && bank2.errors.required" class="validationError">
+                  Bank is required
+                </div>-->
+              </div>
+              <div class="form-group">
+                <label>Account Number<span class="compulsory">*</span></label>
+                <div class="accountDisplayDiv">
+                  <span class="accountDisplayText" *ngIf="paymentChoices.length > i">{{paymentChoices[i].transferPayment.accountNumber}}</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="transactionId2">Transaction Id<span class="compulsory">*</span></label>
+                <input type="text" id="transactionId2" class="form-control" formControlName="transactionId" placeholder="Enter transaction Id">
+                <!--<div *ngIf="transactionId2.invalid && (transactionId2.dirty || transactionId2.touched) && transactionId2.errors.required" class="validationError">
+                  Transaction ID is required
+                </div>-->
+              </div>
+              <div class="form-group">
+                <label for="amount3">Amount<span class="compulsory">*</span></label>
+                <input type="number" id="amount3" formControlName="amount" class="form-control" placeholder="Enter Amount"
+                (keyup)="getTotalAmountPaid()">
+                <div class="unOpenedRegisterDiv" *ngIf="registerId === null">
+                  <span class="fa fa-times-circle"></span>
+                  Please open a cash register.
+                </div>
+                <div class="unOpenedRegisterDiv" *ngIf="registerHourExceeded">
+                  <span class="fa fa-times-circle"></span>
+                  Opened cash register has exceeded 24 hours. Please open another one.
+                </div>
+              </div>
+            </div>
+            <div [style.display]="inputsDisplay[i].showManagerInput">
+              <div class="form-group">
+                <label for="managerName">Manager Name<span class="compulsory">*</span></label>
+                <select id="managerName" formControlName="managerName" class="form-control">
+                  <option *ngFor="let manager of managers" [value]="manager.employeeId">{{manager.employeeName}}</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="referenceNumber">Reference Number<span class="compulsory">*</span></label>
+                <input type="text" id="referenceNumber" class="form-control" formControlName="referenceNumber" placeholder="Enter Reference Number">
+              </div>
+              <div class="form-group">
+                <label for="amount4">Amount<span class="compulsory">*</span></label>
+                <input type="number" id="amount4" formControlName="amount" class="form-control" placeholder="Enter Amount"
+                       (keyup)="getTotalAmountPaid()">
+                <div class="unOpenedRegisterDiv" *ngIf="registerId === null">
+                  <span class="fa fa-times-circle"></span>
+                  Please open a cash register.
+                </div>
+                <div class="unOpenedRegisterDiv" *ngIf="registerHourExceeded">
+                  <span class="fa fa-times-circle"></span>
+                  Opened cash register has exceeded 24 hours. Please open another one.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-bottom: 12px">
+        <div (click)="addPayment()" class="addFormDiv">
+          <span class="icon-plus font-lg"></span>
+          <span class="addForm">Add new billing detail</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<div id="subSummaryDiv">
+  <div class="card">
+    <div class="card-body" id="footerCheckbox">
+      <div class="form-group">
+        <div class="col-form-label">
+          <div class="form-check form-check-inline mr-3">
+            <input class="form-check-input" type="checkbox" id="emailThanks">
+            <label class="form-check-label" for="emailThanks">Email Receipt</label>
+          </div>
+          <div class="form-check form-check-inline mr-3">
+            <input class="form-check-input" type="checkbox" id="printReceipt">
+            <label class="form-check-label" for="printReceipt">Print Receipt</label>
+          </div>
+        </div>
+      </div>
+      <div>
+        <button class="btn btn-primary" (click)="checkInGuest()"
+                [disabled]="guestsForm.invalid || checkPayment || processing || registerId === null || registerHourExceeded">
+          <span *ngIf="processing === true"><i class="fa fa-circle-o-notch fa-spin"></i></span>
+          <span *ngIf="processing === false">Check in</span>
+        </button>
+        <button class="btn btn-dark">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+

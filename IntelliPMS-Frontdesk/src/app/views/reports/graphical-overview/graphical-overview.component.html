@@ -1,0 +1,74 @@
+<div class="row">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        Customer Service Stats
+      </div>
+      <div class="card-body">
+        <div class="chart-wrapper">
+          <canvas baseChart class="chart" *ngIf="barChart1Ready"
+            [datasets]="barChart1Data" [colors]="barChart1Colors"
+            [labels]="barChart1Labels"
+            [options]="barChart1Options"
+            [legend]="barChart1Legend"
+            [chartType]="'bar'"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        Total Activity Count (based on the last 24 hours)
+      </div>
+      <div class="card-body">
+        <div class="chart-wrapper">
+          <canvas baseChart *ngIf="barChart2Ready"
+            [datasets]="barChart2Data"
+            [labels]="barChart2Labels"
+            [options]="barChart1Options"
+            [legend]="barChart2Legend"
+            [chartType]="'bar'"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        Room Availability Summary
+      </div>
+      <div class="card-body">
+        <div class="chart-wrapper">
+          <canvas baseChart class="chart" *ngIf="pieChartReady"
+            [data]="pieChartData"
+            [labels]="pieChartLabels"
+            [chartType]="'pie'"
+            [legend]="pieChartLegend"
+            [options]="pieChartOptions"
+            [plugins]="pieChartPlugins"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        Revenue Statistics (based on the last 24 hours)
+      </div>
+      <div class="card-body">
+        <div class="chart-wrapper">
+          <canvas baseChart class="chart" *ngIf="pieChart2Ready"
+            [data]="pieChart2Data"
+            [labels]="pieChart2Labels"
+            [chartType]="'pie'"
+          ></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

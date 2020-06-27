@@ -1,0 +1,283 @@
+<div id="createHouseKeepingDiv">
+  <button class="btn btn-primary" (click)="open(newHouseKeepingForm)">
+    <span class="fa fa-plus"></span> Create House Keeping Request
+  </button>
+</div>
+
+<div class="col-12">
+  <div class="card">
+    <tabset>
+      <tab>
+        <ng-template tabHeading><i class="fa fa-tasks"></i> Unprocessed Housekeeping Requests &nbsp;<span class="badge badge-pill badge-danger">
+          {{unprocessedHousekeepingNum}}
+        </span></ng-template>
+        <div>
+          <table class="table table-responsive-sm table-responsive-md">
+            <thead>
+            <tr>
+              <th>Sn</th>
+              <th>Guest Name</th>
+              <th>Room Number</th>
+              <th>Created Date</th>
+              <th>Amount</th>
+              <th>Items</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let housekeeping of unprocessedHousekeepingRequest; let i = index">
+              <td>{{i+1}}</td>
+              <td *ngIf="housekeeping.guestName !== null">{{housekeeping.guestName}}</td>
+              <td *ngIf="housekeeping.guestName === null">Multiple Occupants</td>
+              <td>{{housekeeping.roomNumber}}</td>
+              <td>{{housekeeping.createdDateTime}}</td>
+              <td>&#8358; {{housekeeping.amount | number}}</td>
+              <td><span class="viewItemSpan" (click)="open(itemsList)">View items</span></td>
+              <td class="text-danger">{{housekeeping.statuss}}</td>
+              <td><button class="btn btn-primary btn-sm" [disabled]="processing"
+                          (click)="updateHousekeepingRequest('processing', housekeeping.houseKeepingId)">
+                <span *ngIf="processing === false">Start Processing</span>
+                <span *ngIf="processing === true"><i class="fa fa-circle-o-notch fa-spin"></i></span>
+              </button></td>
+              <ng-template #itemsList let-modal>
+                <div class="modal-header">
+                  <h4 class="modal-title">Items</h4>
+                  <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <ul class="itemListUl">
+                    <li *ngFor="let item of housekeeping.items">
+                      <span *ngIf="item.quantity === 1">{{item.serviceName}} ({{item.quantity}} piece)</span>
+                      <span *ngIf="item.quantity > 1">{{item.serviceName}} ({{item.quantity}} pieces)</span>
+                    </li>
+                  </ul>
+                </div>
+              </ng-template>
+            </tr>
+            </tbody>
+          </table>
+          <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+            <li class="page-item active">
+              <a class="page-link" href="#">1</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">4</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+          </ul>
+        </div>
+      </tab>
+      <tab>
+        <ng-template tabHeading><i class="fa fa-circle-o-notch fa-spin"></i> Processing Housekeeping Requests</ng-template>
+        <div>
+          <table class="table table-responsive-sm table-responsive-md">
+            <thead>
+            <tr>
+              <th>Sn</th>
+              <th>Guest Name</th>
+              <th>Room Number</th>
+              <th>Created Date</th>
+              <th>Amount</th>
+              <th>Items</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let housekeeping of processingHousekeepingRequest; let i = index">
+              <td>{{i+1}}</td>
+              <td *ngIf="housekeeping.guestName !== null">{{housekeeping.guestName}}</td>
+              <td *ngIf="housekeeping.guestName === null">Multiple Occupants</td>
+              <td>{{housekeeping.roomNumber}}</td>
+              <td>{{housekeeping.createdDateTime}}</td>
+              <td>&#8358; {{housekeeping.amount | number}}</td>
+              <td><span class="viewItemSpan" (click)="open(itemsList)">View items</span></td>
+              <td class="text-warning">{{housekeeping.statuss}}</td>
+              <td><button class="btn btn-success btn-sm" [disabled]="processing"
+                          (click)="updateHousekeepingRequest('completed', housekeeping.houseKeepingId)">
+                <span *ngIf="processing === false">Completed</span>
+                <span *ngIf="processing === true"><i class="fa fa-circle-o-notch fa-spin"></i></span>
+              </button></td>
+              <ng-template #itemsList let-modal>
+                <div class="modal-header">
+                  <h4 class="modal-title">Items</h4>
+                  <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <ul class="itemListUl">
+                    <li *ngFor="let item of housekeeping.items">
+                      <span *ngIf="item.quantity === 1">{{item.serviceName}} ({{item.quantity}} piece)</span>
+                      <span *ngIf="item.quantity > 1">{{item.serviceName}} ({{item.quantity}} pieces)</span>
+                    </li>
+                  </ul>
+                </div>
+              </ng-template>
+            </tr>
+            </tbody>
+          </table>
+          <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+            <li class="page-item active">
+              <a class="page-link" href="#">1</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">4</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+          </ul>
+        </div>
+      </tab>
+      <tab>
+        <ng-template tabHeading><i class="fa fa-check-circle text-success"></i> Completed Housekeeping Requests</ng-template>
+        <div>
+          <table class="table table-responsive-sm table-responsive-md">
+            <thead>
+            <tr>
+              <th>Sn</th>
+              <th>Guest Name</th>
+              <th>Room Number</th>
+              <th>Created Date</th>
+              <th>Amount</th>
+              <th>Items</th>
+              <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let housekeeping of completedHousekeepingRequest; let i = index">
+              <td>{{i+1}}</td>
+              <td *ngIf="housekeeping.guestName !== null">{{housekeeping.guestName}}</td>
+              <td *ngIf="housekeeping.guestName === null">Multiple Occupants</td>
+              <td>{{housekeeping.roomNumber}}</td>
+              <td>{{housekeeping.createdDateTime}}</td>
+              <td>&#8358; {{housekeeping.amount | number}}</td>
+              <td><span class="viewItemSpan" (click)="open(itemsList)">View items</span></td>
+              <td class="text-success">{{housekeeping.statuss}}</td>
+              <ng-template #itemsList let-modal>
+                <div class="modal-header">
+                  <h4 class="modal-title">Items</h4>
+                  <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <ul class="itemListUl">
+                    <li *ngFor="let item of housekeeping.items">
+                      <span *ngIf="item.quantity === 1">{{item.serviceName}} ({{item.quantity}} piece)</span>
+                      <span *ngIf="item.quantity > 1">{{item.serviceName}} ({{item.quantity}} pieces)</span>
+                    </li>
+                  </ul>
+                </div>
+              </ng-template>
+            </tr>
+            </tbody>
+          </table>
+          <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+            <li class="page-item active">
+              <a class="page-link" href="#">1</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">4</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+          </ul>
+        </div>
+      </tab>
+    </tabset>
+  </div>
+</div>
+
+<ng-template #newHouseKeepingForm let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">New House Keeping Form</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form #houseKeepingForm="ngForm">
+      <div class="form-group">
+        <label for="roomNumber">Room Number</label>
+        <select id="roomNumber" class="form-control" (change)="getGuestsName()" name="roomNumber" [(ngModel)]="houseKeepingRequest.roomId">
+          <option *ngFor="let room of checkedInRooms" [value]="room.roomId">Room {{room.roomNumber}}</option>
+          <option *ngIf="checkedInRooms.length === 0">
+            No checked in rooms
+          </option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="name">Guest Name</label>
+        <input type="text" id="name" class="form-control" [(ngModel)]="houseKeepingRequest.guestName" name="guestName" disabled>
+      </div>
+    </form>
+    <form [formGroup]="itemsForm">
+      <div formArrayName="itemDetail">
+        <div *ngFor="let _ of itemForm.controls; let i=index">
+          <div class="row" [formGroupName]="i">
+            <div class="col-md-7">
+              <div class="form-group">
+                <label for="item">
+                  Item <span *ngIf = "itemForm.controls.length > 1">{{i+1}}</span>
+                </label>
+                <select id="item" class="form-control" formControlName="itemName">
+                  <option *ngFor="let service of hotelServices" [value]="service.serviceId">
+                    {{service.serviceName}} (&#8358;{{service.serviceCost}})
+                  </option>
+                  <option *ngIf="hotelServices.length === 0">
+                    No items created yet
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-5">
+              <div class="form-group">
+                <label for="quantity" style="width:100%">Quantity
+                  <span class="pull-right removeForm" *ngIf = "itemForm.controls.length > 1"
+                        (click)="removeItem(i)">Remove
+                  </span>
+                </label>
+                <input type="number" class="form-control" id="quantity" formControlName="quantity" (keyup)="calculateTotalAmount()">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom: 10px">
+          <div class="addFormDiv">
+            <span class="icon-plus font-lg"></span>
+            <span class="addForm" (click)="addItem()">Add House keeping item</span>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="form-group">
+      <label class="col-form-label">Payment Status</label>
+      <div class="col-form-label">
+        <div class="form-check form-check-inline mr-3">
+          <input class="form-check-input" type="radio" [(ngModel)]="houseKeepingRequest.paymentStatus" name="paymentStatus"
+                 id="unpaid" value="unpaid" required>
+          <label class="form-check-label" for="unpaid">Unpaid</label>
+        </div>
+        <div class="form-check form-check-inline mr-3">
+          <input class="form-check-input" type="radio" [(ngModel)]="houseKeepingRequest.paymentStatus" name="paymentStatus"
+                 id="paid" value="paid" required>
+          <label class="form-check-label" for="paid">Paid</label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <span class="serviceTotal">Total: &#8358; {{totalCost | number}}</span>
+    <button type="button" class="btn btn-primary" [disabled]="houseKeepingForm.invalid || itemsForm.invalid || processing"
+            (click)="submitHouseKeepingRequest()">
+      <span *ngIf="processing === false">Create</span>
+      <span *ngIf="processing === true"><i class="fa fa-circle-o-notch fa-spin"></i></span>
+    </button>
+    <button type="button" class="btn pg-danger text-white" (click)="clearLaundryRequest()">Cancel</button>
+  </div>
+</ng-template>

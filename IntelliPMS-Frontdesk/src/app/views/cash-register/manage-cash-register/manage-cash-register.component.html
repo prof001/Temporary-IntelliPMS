@@ -1,0 +1,140 @@
+<alert type="info" dismissible="true"  *ngIf="registerClosedChecker == true">
+  Cash Register has being closed successfully
+</alert>
+
+<div [class.hideElement]="showCashRegister">
+  <div id="emptyCashRegister">
+    <i class="icon-book-open"></i>
+    <div>No Cash Register Opened Yet</div>
+    <button class="btn btn-lg btn-primary mt-2" (click)="open(openRegister)">Open Cash Register</button>
+  </div>
+</div>
+
+<ng-template #openRegister let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Open Cash Register</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="form-group">
+        <label for="cash">Enter cash on hand<span class="compulsory">*</span></label>
+        <input type="number" id="cash" class="form-control" [(ngModel)]="cashOnHand" name="cashOnHand"
+               required #cash="ngModel">
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="openCashRegister()" [disabled]="cash.invalid">Open Register</button>
+  </div>
+</ng-template>
+
+<div class="container" [class.hideElement]="!showCashRegister">
+  <h2 style="margin-bottom: 40px">Cash Register</h2>
+  <div>
+    <div class="row introInfo">
+      <span class="col-md-2">Staff Name:</span>
+      <span class="col-md-4">{{employee.employeeName}}</span>
+    </div>
+    <div class="row introInfo">
+      <span class="col-md-2">Opening Date:</span>
+      <span class="col-md-4">{{openedDateTime}}</span>
+    </div>
+    <div class="row">
+      <table class="table table-responsive-sm">
+        <thead>
+         <tr>
+           <th>Sn</th>
+           <th>Type</th>
+           <th>Details</th>
+           <th>Time</th>
+           <th>Amount</th>
+         </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Payment</td>
+            <td>Opening Cash</td>
+            <td>{{openedDateTime}}</td>
+            <td>&#8358; {{openedRegister.cashOnHand | number}}</td>
+          </tr>
+          <tr *ngFor="let record of openedRegister.registerDetails; let i=index">
+            <td>{{i + 2}}</td>
+            <td style="text-transform: capitalize">{{record.paymentType}}</td>
+            <td style="text-transform: capitalize">{{record.billedFor}}</td>
+            <td>{{record.formattedDate}}</td>
+            <td>&#8358; {{record.amount | number}}</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4">Total</td>
+            <td>&#8358; {{totalAmount | number}}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <div class="row introInfo">
+      <div class="form-group">
+        <label for="closingSummary">Closing Summary<span class="compulsory">*</span></label>
+        <textarea id="closingSummary" class="form-control" style="height: 100px; width: 650%" [(ngModel)]="closingSummary">
+        </textarea>
+      </div>
+    </div>
+  </div>
+  <div>
+    <button class="btn btn-primary btn-lg pull-right ml-3" [disabled]="closingSummary === ''" (click)="open(receiptSummary)">Close Register</button>
+    <button class="btn btn-primary btn-lg pull-right">Print Register</button>
+  </div>
+</div>
+
+<ng-template #receiptSummary let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Cash Register Summary</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div id="billCardDateDiv">
+      <div id="billOwner">
+        {{employee.employeeName}}
+      </div>
+      <div>
+        {{currentTime}}
+      </div>
+    </div>
+    <div id="billCardTableDiv" style="margin-top:-30px">
+      <table>
+        <tr *ngFor="let record of cashRegisterSummary">
+          <td>
+            <span *ngIf="record.paymentType == 'cashOnHand'">Opening Cash:</span>
+            <span class="displayer" *ngIf="record.paymentType !== 'cashOnHand'">{{record.paymentType}}:</span>
+          </td>
+          <td>
+            <span *ngIf="record.paymentType == 'cashOnHand'">&#8358; {{record.totalAmount | number}}</span>
+            <span *ngIf="record.paymentType !== 'cashOnHand' && record.num === 1">
+              &#8358; {{record.totalAmount | number}} ({{record.num}} item)
+            </span>
+            <span *ngIf="record.paymentType !== 'cashOnHand' && record.num !== 1">
+              &#8358; {{record.totalAmount | number}} ({{record.num}} items)
+            </span>
+          </td>
+        </tr>
+        <hr/>
+        <tr style="font-size: 16px; font-weight: 600">
+          <td>Total:</td>
+          <td>&#8358; {{totalAmount | number}} </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary pull-right">Print Receipt</button>
+    <button class="btn btn-dark pull-right" (click)="closeCashRegister()">Close Register</button>
+  </div>
+</ng-template>
+

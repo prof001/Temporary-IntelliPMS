@@ -1,0 +1,13 @@
+.progress-bar {
+  width: 100%;
+}
+
+.caret {
+  color: white;
+}
+
+.filterDiv {
+  display: flex;
+  margin-bottom: 15px;
+  justify-content: flex-end;
+}

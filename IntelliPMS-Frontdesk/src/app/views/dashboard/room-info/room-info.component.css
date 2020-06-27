@@ -1,0 +1,19 @@
+#majorInfo {
+  line-height: 40px;
+  font-size: 14px;
+  margin-top: 15px;
+}
+
+#majorInfo th {
+  padding-right: 10px;
+  font-size: 16px;
+}
+
+#roomPreviousOccupants {
+  margin-top: 50px;
+}
+
+.badge-secondary {
+  padding: 10px;
+  margin-right:6px;
+}

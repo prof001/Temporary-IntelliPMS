@@ -1,0 +1,22 @@
+#mainForm {
+  display: flex;
+  justify-content: center;
+}
+
+input[type='file'] {
+  display: none;
+}
+
+.employeeHotelDiv {
+  padding:0;
+}
+
+.employeeHotelDiv label {
+  display: flex;
+  justify-content: space-between;
+}
+
+.removeForm {
+  align-self: flex-start;
+}
+

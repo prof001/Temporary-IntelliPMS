@@ -1,0 +1,416 @@
+<alert type="info" dismissible="true" *ngIf="successChecker == true">
+  Congrats, you have successfully created a hotel. You can now create rooms and services.
+</alert>
+<alert type="info" dismissible="true" *ngIf="roomTypeChecker == true" (onClose)="closeRoomTypeAlert()">
+  Room Type created successfully!
+</alert>
+<alert type="info" dismissible="true" *ngIf="buildingChecker == true" (onClose)="closeBuildingAlert()">
+  Building created successfully!
+</alert>
+<alert type="info" dismissible="true" *ngIf="roomChecker == true" (onClose)="closeCreateRoomAlert()">
+  Room Created Successfully!
+</alert>
+<alert type="danger" dismissible="true" *ngIf="getRoomError !== ''">
+  {{getRoomError}}
+</alert>
+<div *ngIf="getRoomError === ''">
+  <div id="control-buttons">
+    <button class="btn btn-primary" (click)="open(createRoomType)">Create Room Types</button>
+    <button class="btn btn-primary" (click)="open(createBuilding)">Buildings</button>
+    <button class="btn btn-primary" type="button" (click)="open(createRoom)">Create Room</button>
+    <!--<button class="btn btn-primary" (click)="open(account)">Accounts</button>-->
+    <button class="btn btn-primary" (click)="open(createService)">Create Hotel Service</button>
+    <!--<button class="btn btn-primary" routerLink="edit">Edit Hotel Info</button>-->
+  </div>
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <img *ngIf="hotelDetails.picture !== ''" [src] = "hotelDetails.picture" alt="Hotel picture"  height="300px" width="350px">
+      <img *ngIf="hotelDetails.picture == '' || hotelDetails.picture == null" src="../../../../../assets/nopix.png" height="300px" width="350px"/>
+    </div>
+    <div class="col-sm-12 col-md-6 animated fadeIn" id="majorInfo">
+      <div class="card">
+        <div class="card-body">
+          <table style="line-height: 35px">
+            <tr>
+              <th>Hotel Name:</th>
+              <td>{{hotelDetails.hotelName}}</td>
+            </tr>
+            <tr>
+              <th>Number of Rooms:</th>
+              <td>{{hotelDetails.numOfRooms}}</td>
+            </tr>
+            <tr>
+              <th>Address:</th>
+              <td>{{hotelDetails.address}}</td>
+            </tr>
+            <tr>
+              <th>Location</th>
+              <td>{{hotelDetails.location}}</td>
+            </tr>
+            <tr>
+              <th>Services:</th>
+              <td>
+                <span *ngIf="hotelDetails.services?.length == 0" style="color: #BF0808">No services yet</span>
+                <span *ngFor="let service of hotelDetails.services" style="margin-right: 5px" class="badge badge-secondary">
+                {{service.serviceName}}
+              </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row roomsList">
+    <div id="noRooms" *ngIf="roomsList.length == 0"> No rooms yet </div>
+    <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let room of roomsList">
+      <div class="card" style="cursor: pointer">
+        <div class="card-body">
+          <div class="h1 text-muted text-right mb-4">
+            <span [class]="room.icon"></span>
+          </div>
+          <div class="h4 mb-0">Room {{room.roomNumber}}</div>
+          <div class="mt-2 mb-2" style="text-transform: capitalize">{{room.roomTypeName}}</div>
+          <div class="text-muted font-weight-bold">&#8358;{{room.cost | number}}/Per Night</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #createService let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Create Service</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form #serviceForm="ngForm">
+      <div class="form-group">
+        <label for="service-type">Service Type</label>
+        <select id="service-type" class="form-control" [(ngModel)]="services.serviceType" name="serviceType">
+          <option value="housekeeping">Housekeeping Service</option>
+          <option value="laundry">Laundry Service</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="service-name">Service Name</label>
+        <input type="text" [(ngModel)]="services.serviceName" name="serviceName" id="service-name" class="form-control"
+               #serviceName="ngModel" required>
+        <span class="validationError" *ngIf="(serviceName.dirty || serviceName.touched) && serviceName.invalid && serviceName.errors.required">
+          Service Name is required
+        </span>
+      </div>
+      <div class="form-group">
+        <label for="service-cost">Service Cost</label>
+        <input type="number" [(ngModel)]="services.serviceCost" name="serviceCost" id="service-cost" class="form-control"
+               #serviceCost="ngModel" required>
+        <span class="validationError" *ngIf="(serviceCost.dirty || serviceCost.touched) && serviceCost.invalid && serviceCost.errors.required">
+          The Service Cost is required
+        </span>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" [disabled]="processing || serviceForm.invalid" (click)="addService()">
+      <span *ngIf="processing === false">Save</span>
+      <span *ngIf="processing === true"><i class="fa fa-circle-o-notch fa-spin"></i></span>
+    </button>
+    <button type="button" class="btn btn-danger" (click)="modal.close()">Cancel</button>
+  </div>
+</ng-template>
+
+<ng-template #createRoom let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Create Room</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="roomForm">
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="form-group">
+            <label for="room-number">Room Number</label>
+            <input type="number" formControlName="roomNumber" required id="room-number" class="form-control" (keyup)="validateRoomNumber()">
+            <span class="validationError" *ngIf="(roomNumber.dirty || roomNumber.touched) && roomNumber.invalid && roomNumber.errors.required">
+              The room number is required
+            </span>
+            <span *ngIf="roomNumberConflict" class="validationError">
+              Room Number already exists
+            </span>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="form-group" id="roomTypeDiv">
+            <label for="room-type">Room Type</label>
+            <select id="room-type" class="form-control" formControlName="roomType" required (change)="onTypeChanged()">
+              <option *ngFor="let type of hotelRoomTypes" [value]="type.roomTypeId" style="text-transform: capitalize">
+                {{type.roomTypeName}}
+              </option>
+            </select>
+          </div>
+          <span class="validationError" *ngIf="(roomType.dirty || roomType.touched) && roomType.invalid && roomType.errors.required">
+            The room type is required
+          </span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="building">Select Building</label>
+        <select id="building" class="form-control" formControlName="building" required>
+          <option *ngFor="let building of hotelBuildings" [value]="building.buildingId" style="text-transform: capitalize">
+            {{building.buildingName}}
+          </option>
+        </select>
+        <div class="validationError" *ngIf="(building.dirty || building.touched) && building.invalid && building.errors.required">
+         Building is required
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="basePrice2">Base Price</label>
+            <input type="number" class="form-control" id="basePrice2" [value]="roomTypeBasePrice" disabled>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="adjustedPrice">Adjusted Price</label>
+            <input type="number" class="form-control" formControlName="adjustedPrice" id="adjustedPrice" required>
+            <div class="validationError" *ngIf="(adjustedPrice.dirty || adjustedPrice.touched) && adjustedPrice.invalid">
+              <div *ngIf="adjustedPrice.errors.required">
+                The room cost is required
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-form-label">Room Attributes</label>
+        <tag-input formControlName="attributes" placeholder="+ Add"></tag-input>
+      </div>
+      <div class="form-group">
+        <button class="btn btn-primary" (click)="filePicker.click()">Choose Room Image</button> <br/>
+        <input type="file" id="picture" formControlName="picture" class="form-control" #filePicker (change)="showPreview($event)">
+        <div *ngIf="imageUrl && imageUrl !== ''" style="margin-top: 10px">
+          <img [src]="imageUrl" alt="Room Picture" height="250px" width="100%">
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="addRoom()" [disabled]="roomForm.invalid || processing || roomNumberConflict">
+      <span *ngIf="processing === false">Save</span>
+      <span *ngIf="processing === true"><i class="fa fa-circle-o-notch fa-spin"></i></span>
+    </button>
+    <button type="button" class="btn btn-danger" (click)="modal.close()">Cancel</button>
+  </div>
+</ng-template>
+
+<ng-template #createRoomType let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Create Room Type</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form #roomTypeForm="ngForm">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="roomType">Room Type</label>
+            <input type="text" id="roomType" [(ngModel)]="roomTypeDetail.roomTypeName" #roomTypeName="ngModel"
+                   name="roomTypeName" class="form-control" required (keyup)="validateRoomType()">
+            <div *ngIf="roomTypeName.invalid && (roomTypeName.dirty || roomTypeName.touched) && roomTypeName.errors.required" class="validationError">
+              Room type name required
+            </div>
+            <span *ngIf="roomTypeConflict" class="validationError">
+              Room Type already exists
+            </span>
+            <!--<input type="text" id="roomType" placeholder="Enter room type" [(ngModel)]="roomTypeDetail.roomTypeName"
+                   #roomTypeName = "ngModel" name="roomTypeName" class="form-control" required>
+            <div *ngIf="roomTypeName.invalid && (roomTypeName.dirty || roomTypeName.touched) && roomTypeName.errors.required" class="validationError">
+              Room type name required
+            </div>-->
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="quantity2">Number of rooms</label>
+            <input type="number" id="quantity2" class="form-control" [(ngModel)]="roomTypeDetail.quantity" #quantity2="ngModel"
+                   name="quantity2" required>
+            <div *ngIf="quantity2.invalid && (quantity2.dirty || quantity2.touched) && quantity2.errors.required" class="validationError">
+              Room quantity required
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="basePrice">Base Price</label>
+            <input type="number" id="basePrice" class="form-control" [(ngModel)]="roomTypeDetail.basePrice" #basePrice="ngModel"
+                   name="basePrice" required>
+            <div *ngIf="basePrice.invalid && (basePrice.dirty || basePrice.touched) && basePrice.errors.required" class="validationError">
+              Base Price required
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="minimumPrice">Minimum Price</label>
+            <input type="number" id="minimumPrice" class="form-control" [(ngModel)]="roomTypeDetail.minimumPrice"
+                   #minimumPrice="ngModel" name="minimumPrice" required>
+            <div *ngIf="minimumPrice.invalid && (minimumPrice.dirty || minimumPrice.touched) && minimumPrice.errors.required" class="validationError">
+              Minimum Price required
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="shortDescription">Short Description</label>
+        <textarea id="shortDescription" class="form-control" style="height:80px" [(ngModel)]="roomTypeDetail.shortDescription"
+                  required #shortDescription="ngModel" name="shortDescription"></textarea>
+        <div *ngIf="shortDescription.invalid && (shortDescription.dirty || shortDescription.touched) && shortDescription.errors.required" class="validationError">
+          Short Description required
+        </div>
+      </div>
+      <div class="row" style="vertical-align: middle">
+        <div class="col-md-6">
+          <label for="roomTypeIcon">Room Type Icon</label>
+          <select class="form-control" id="roomTypeIcon" [(ngModel)]="roomTypeDetail.icon" name="selectedIcon">
+            <option *ngFor="let icon of icons" [value]="icon">{{icon}}</option>
+          </select>
+        </div>
+        <div class="col-md-6 my-auto text-center">
+          <span [class]="roomTypeDetail.icon" style="font-size: 45px;"></span>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" [disabled]="roomTypeForm.invalid || processing || roomTypeConflict" (click)="addRoomType()">
+      <span *ngIf="processing === false">Save</span>
+      <span *ngIf="processing === true"><i class="fa fa-circle-o-notch fa-spin"></i></span>
+    </button>
+    <button type="button" class="btn btn-danger" (click)="modal.close()">Cancel</button>
+  </div>
+</ng-template>
+
+<ng-template #createBuilding let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Create Building</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form #buildingForm = "ngForm">
+      <div class="form-group">
+        <label for="buildingName">Building Name</label>
+        <input type="text" id="buildingName" class="form-control" [(ngModel)]="buildingDetail.buildingName"
+               #buildingName="ngModel" name="buildingName" required>
+        <div *ngIf="buildingName.invalid && (buildingName.dirty || buildingName.touched) && buildingName.errors.required" class="validationError">
+          Building name is required
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="numOfRooms">Number of Rooms</label>
+        <input type="number" id="numOfRooms" class="form-control" [(ngModel)]="buildingDetail.numOfRooms"
+               #numOfRooms="ngModel" name="numOfRooms" required>
+        <div *ngIf="numOfRooms.invalid && (numOfRooms.dirty || numOfRooms.touched) && numOfRooms.errors.required" class="validationError">
+          Number of rooms is required
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="startingRoom">Starting Room</label>
+            <input type="number" id="startingRoom" class="form-control" [(ngModel)]="buildingDetail.startingRoom"
+                   #startingRoom="ngModel" name="startingRoom" required>
+            <div *ngIf="startingRoom.invalid && (startingRoom.dirty || startingRoom.touched) && startingRoom.errors.required" class="validationError">
+              Starting Room is required
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="endingRoom">Ending Room</label>
+            <input type="number" id="endingRoom" class="form-control" [(ngModel)]="buildingDetail.endingRoom"
+                   #endingRoom="ngModel" name="endingRoom" required>
+            <div *ngIf="endingRoom.invalid && (endingRoom.dirty || endingRoom.touched) && endingRoom.errors.required" class="validationError">
+              Ending room is required
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" [disabled]="buildingForm.invalid || processing" (click)="addBuilding()">
+      <span *ngIf="processing === false">Save</span>
+      <span *ngIf="processing === true"><i class="fa fa-circle-o-notch fa-spin"></i></span>
+    </button>
+    <button type="button" class="btn btn-danger" (click)="modal.close()">Cancel</button>
+  </div>
+</ng-template>
+
+<ng-template #account let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Account</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="bankName">Bank Name</label>
+            <select id="bankName" class="form-control" required>
+              <option *ngFor="let bank of banksList" [value]="bank">{{bank}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="accountNumber">Account Number</label>
+            <input type="number" id="accountNumber" class="form-control">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="bankName2">BankName</label>
+            <select id="bankName2" class="form-control" required>
+              <option *ngFor="let bank of banksList" [value]="bank">{{bank}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="accountNumber2">Account Number</label>
+            <input type="number" id="accountNumber2" class="form-control">
+          </div>
+        </div>
+      </div>
+      <div style="margin-bottom: 10px">
+        <div class="addFormDiv">
+          <span class="icon-plus font-lg"></span>
+          <span class="addForm">Add new account</span>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="addService()">Save</button>
+    <button type="button" class="btn btn-danger" (click)="modal.close()">Cancel</button>
+  </div>
+</ng-template>
+

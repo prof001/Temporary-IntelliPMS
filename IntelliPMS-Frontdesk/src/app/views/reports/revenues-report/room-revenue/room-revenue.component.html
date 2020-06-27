@@ -1,0 +1,157 @@
+<alert type="danger" dismissible="true" *ngIf="showExportError === true" (onClose)="onAlertClosed()">
+  Can't export an empty record to CSV
+</alert>
+<div class="row">
+  <div class="col-lg-12">
+    <div class="card">
+      <div class="card-header">
+        Rooms Revenue
+        <button class="btn btn-sm btn-secondary float-right" (click)="exportDataToCsv1()">Export as CSV</button>
+      </div>
+      <div class="card-body">
+        <div class="selectDateDiv">
+          <div class="form-inline">
+            <label for="startDate" style="margin-right: 5px">Start Date: </label>
+            <input class="form-control" placeholder="YYYY-MM-DD" id="startDate"
+                   name="dp" [(ngModel)]="startDate" ngbDatepicker #d="ngbDatepicker" (dateSelect)="filterRoomRevenueReport()">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button"><i class="fa fa-calendar"></i></button>
+            </div>
+          </div>
+          <div class="form-inline">
+            <label for="endDate" style="margin-right: 5px">End Date: </label>
+            <input class="form-control" placeholder="YYYY-MM-DD" id="endDate"
+                   name="dp" [(ngModel)]="endDate" ngbDatepicker #de="ngbDatepicker" (dateSelect)="filterRoomRevenueReport()">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" (click)="de.toggle()" type="button"><i class="fa fa-calendar"></i></button>
+            </div>
+          </div>
+        </div>
+        <span class="notice" *ngIf="showNotice">*Note: Currently showing room revenue for the last 24 hours.</span>
+        <table class="table table-responsive-sm table-outline table-hover">
+          <thead class="thead-light">
+          <tr>
+            <th>Sn</th>
+            <th>Room</th>
+            <th>CheckIn Number</th>
+            <th>Total Revenue</th>
+            <th>Room Revenue</th>
+            <th>Laundry Revenue</th>
+            <th>Room Service Revenue</th>
+            <th>House Keeping Revenue</th>
+            <th>Average Revenue</th>
+          </tr>
+          </thead>
+          <tbody *ngIf="roomsList.length > 0">
+          <tr *ngFor="let room of roomsList; let i = index">
+            <td>{{i+1}}</td>
+            <td>Room {{room.roomNumber}}</td>
+            <td>{{room.numberCheckedIn}}</td>
+            <td>&#8358;{{room.totalRevenue | number}}</td>
+            <td>&#8358;{{room.roomRevenue === null ? 0 : room.roomRevenue | number}}</td>
+            <td>&#8358;{{room.laundryServiceRevenue === null ? 0 : room.laundryServiceRevenue | number}}</td>
+            <td>&#8358;{{room.roomServiceRevenue === null ? 0 : room.roomServiceRevenue | number}}</td>
+            <td>&#8358;{{room.houseKeepingRevenue === null ? 0 : room.houseKeepingRevenue | number}}</td>
+            <td>&#8358;{{room.averageRevenue === null ? 0 : room.averageRevenue | number}}</td>
+          </tr>
+          </tbody>
+          <tbody *ngIf="roomsList.length === 0">
+          <tr>
+            <td style="color: #BF0808" colspan="9" class="text-center">No revenues during this period</td>
+          </tr>
+          </tbody>
+          <tfoot *ngIf="roomsList.length > 0">
+          <tr class="totalStyle">
+            <td colspan="2">Total</td>
+            <td>{{totalNumberCheckIn}}</td>
+            <td>&#8358;{{grandTotalRevenue | number}}</td>
+            <td>&#8358;{{totalRoomRevenue | number}}</td>
+            <td>&#8358;{{totalLaundryRevenue | number}}</td>
+            <td>&#8358;{{totalRoomServiceRevenue | number}}</td>
+            <td>&#8358;{{totalHouseKeepingRevenue | number}}</td>
+            <td>&#8358;{{grandAverageRevenue | number}}</td>
+          </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12">
+    <div class="card">
+      <div class="card-header">
+        Rooms Category Revenue
+        <button class="btn btn-sm btn-secondary float-right" (click)="exportDataToCsv2()">Export as CSV</button>
+      </div>
+      <div class="card-body">
+        <div class="selectDateDiv">
+          <div class="form-inline">
+            <label for="startDate2" style="margin-right: 5px">Start Date: </label>
+            <input class="form-control" placeholder="YYYY-MM-DD" id="startDate2"
+                   name="dp" [(ngModel)]="startDate2" ngbDatepicker #d2="ngbDatepicker" (dateSelect)="filterRoomTypeReport()">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" (click)="d2.toggle()" type="button"><i class="fa fa-calendar"></i></button>
+            </div>
+          </div>
+          <div class="form-inline">
+            <label for="endDate2" style="margin-right: 5px">End Date: </label>
+            <input class="form-control" placeholder="YYYY-MM-DD" id="endDate2"
+                   name="dp" [(ngModel)]="endDate2" ngbDatepicker #de2="ngbDatepicker" (dateSelect)="filterRoomTypeReport()">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" (click)="de2.toggle()" type="button"><i class="fa fa-calendar"></i></button>
+            </div>
+          </div>
+        </div>
+        <span class="notice" *ngIf="showNotice2">*Note: Currently showing room type revenue for the last 24 hours.</span>
+        <table class="table table-responsive-sm table-outline table-hover">
+          <thead class="thead-light">
+          <tr>
+            <th>Sn</th>
+            <th>Room Type Name</th>
+            <th>CheckIn Number</th>
+            <th>Total Revenue</th>
+            <th>Room Revenue</th>
+            <th>Laundry Revenue</th>
+            <th>Room Service Revenue</th>
+            <th>House Keeping Revenue</th>
+            <th>Average Revenue</th>
+          </tr>
+          </thead>
+          <tbody *ngIf="roomTypesList.length > 0">
+          <tr *ngFor="let room of roomTypesList; let i = index">
+            <td>{{i+1}}</td>
+            <td style="text-transform: capitalize">{{room.roomTypeName}}</td>
+            <td>{{room.numberCheckedIn}}</td>
+            <td>&#8358;{{room.totalRevenue | number}}</td>
+            <td>&#8358;{{room.roomRevenue === null ? 0 : room.roomRevenue | number}}</td>
+            <td>&#8358;{{room.laundryServiceRevenue === null ? 0 : room.laundryServiceRevenue | number}}</td>
+            <td>&#8358;{{room.roomServiceRevenue === null ? 0 : room.roomServiceRevenue | number}}</td>
+            <td>&#8358;{{room.houseKeepingRevenue === null ? 0 : room.houseKeepingRevenue | number}}</td>
+            <td>&#8358;{{room.averageRevenue === null ? 0 : room.averageRevenue | number}}</td>
+          </tr>
+          </tbody>
+          <tbody *ngIf="roomTypesList.length === 0">
+          <tr>
+            <td style="color: #BF0808" colspan="9" class="text-center">No revenues during this period</td>
+          </tr>
+          </tbody>
+          <tfoot *ngIf="roomTypesList.length > 0">
+          <tr class="totalStyle">
+            <td colspan="2">Total</td>
+            <td>{{totalNumberCheckIn2}}</td>
+            <td>&#8358;{{grandTotalRevenue2 | number}}</td>
+            <td>&#8358;{{totalRoomRevenue2 | number}}</td>
+            <td>&#8358;{{totalLaundryRevenue2 | number}}</td>
+            <td>&#8358;{{totalRoomServiceRevenue2 | number}}</td>
+            <td>&#8358;{{totalHouseKeepingRevenue2 | number}}</td>
+            <td *ngIf="grandAverageRevenue2 > 0">&#8358;{{grandAverageRevenue2 | number}}</td>
+          </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-1"></div>
+</div>

@@ -1,0 +1,346 @@
+<alert type="info" dismissible="true"  *ngIf="laundryInsertedAlert == true">
+  Laundry has been created successfully
+</alert>
+<div id="createLaundryDiv">
+  <button class="btn btn-primary" (click)="open(newLaundryForm)">
+    <span class="fa fa-plus"></span> Create Laundry Request
+  </button>
+</div>
+
+<div class="col-12">
+  <div class="card">
+    <tabset>
+      <tab>
+        <ng-template tabHeading><i class="fa fa-tasks"></i> Unprocessed Laundry Requests &nbsp;<span class="badge badge-pill badge-danger">
+          {{unprocessedLaundryRequestsNumber}}
+        </span></ng-template>
+        <div>
+          <table class="table table-responsive-sm table-responsive-md">
+            <thead>
+            <tr>
+              <th>Sn</th>
+              <th>Guest Name</th>
+              <th>Created DateTime</th>
+              <th>Due DateTime</th>
+              <th>Items</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngIf="unprocessedLaundryRequest.length === 0" class="emptyRequest">
+              <td colspan="7">No Unprocessed Requests</td>
+            </tr>
+            <tr *ngFor="let laundryRequest of unprocessedLaundryRequest; let i = index">
+              <td>{{i+1}}</td>
+              <td *ngIf="laundryRequest.guestName !== null">
+                {{laundryRequest.guestName}}
+              </td>
+              <td *ngIf="laundryRequest.guestName === null">
+                Multiple Occupants
+              </td>
+              <td>{{laundryRequest.createdDateTime}}</td>
+              <td>{{laundryRequest.dueDateTime}}</td>
+              <td><span class="viewItemSpan" (click)="open(itemsList)">View items</span></td>
+              <td>&#8358; {{laundryRequest.amount | number}}</td>
+              <td class="text-danger">{{laundryRequest.statuss}}</td>
+              <td>
+                <button class="btn btn-primary btn-sm" [disabled]="processing"
+                        (click)="updateLaundryRequest('processing', laundryRequest.laundryId)">
+                  <span *ngIf="processing === false">Start Processing</span>
+                  <span *ngIf="processing === true"><i class="fa fa-circle-o-notch fa-spin"></i></span>
+                </button> </td>
+              <ng-template #itemsList let-modal>
+                <div class="modal-header">
+                  <h4 class="modal-title">Items</h4>
+                  <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <ul class="itemListUl">
+                    <li *ngFor="let item of laundryRequest.items">
+                      <span *ngIf="item.quantity === 1">{{item.serviceName}} ({{item.quantity}} piece)</span>
+                      <span *ngIf="item.quantity > 1">{{item.serviceName}} ({{item.quantity}} pieces)</span>
+                    </li>
+                  </ul>
+                </div>
+              </ng-template>
+            </tr>
+            </tbody>
+          </table>
+          <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+            <li class="page-item active">
+              <a class="page-link" href="#">1</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">4</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+          </ul>
+        </div>
+      </tab>
+      <tab>
+        <ng-template tabHeading><i class="fa fa-circle-o-notch fa-spin"></i> Processing Laundry Requests</ng-template>
+        <div>
+          <table class="table table-responsive-sm table-responsive-md">
+            <thead>
+            <tr>
+              <th>Sn</th>
+              <th>Guest Name</th>
+              <th>Created DateTime</th>
+              <th>Due DateTime</th>
+              <th>Items</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngIf="processingLaundryRequest.length === 0" class="emptyRequest">
+              <td colspan="7">No Processing Requests</td>
+            </tr>
+            <tr *ngFor="let laundryRequest of processingLaundryRequest; let i = index">
+              <td>{{i+1}}</td>
+              <td *ngIf="laundryRequest.guestName !== null">
+                {{laundryRequest.guestName}}
+              </td>
+              <td *ngIf="laundryRequest.guestName === null">
+                Multiple Occupants
+              </td>
+              <td>{{laundryRequest.createdDateTime}}</td>
+              <td>{{laundryRequest.dueDateTime}}</td>
+              <td><span class="viewItemSpan" (click)="open(itemsList)">View items</span></td>
+              <td>&#8358; {{laundryRequest.amount | number}}</td>
+              <td class="text-warning">{{laundryRequest.statuss}}</td>
+              <td><button class="btn btn-success btn-sm" [disabled]="processing"
+                          (click)="updateLaundryRequest('completed', laundryRequest.laundryId)">
+                <span *ngIf="processing === false">Completed</span>
+                <span *ngIf="processing === true"><i class="fa fa-circle-o-notch fa-spin"></i></span>
+              </button></td>
+
+              <ng-template #itemsList let-modal>
+                <div class="modal-header">
+                  <h4 class="modal-title">Items</h4>
+                  <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <ul class="itemListUl">
+                    <li *ngFor="let item of laundryRequest.items">
+                      <span *ngIf="item.quantity === 1">{{item.serviceName}} ({{item.quantity}} piece)</span>
+                      <span *ngIf="item.quantity > 1">{{item.serviceName}} ({{item.quantity}} pieces)</span>
+                    </li>
+                  </ul>
+                </div>
+              </ng-template>
+            </tr>
+            </tbody>
+          </table>
+          <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+            <li class="page-item active">
+              <a class="page-link" href="#">1</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">4</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+          </ul>
+        </div>
+      </tab>
+      <tab>
+        <ng-template tabHeading><i class="fa fa-check-circle text-success"></i> Completed Laundry Requests</ng-template>
+        <div>
+          <table class="table table-responsive-sm table-responsive-md">
+            <thead>
+            <tr>
+              <th>Sn</th>
+              <th>Guest Name</th>
+              <th>Created DateTime</th>
+              <th>Due DateTime</th>
+              <th>Completed DateTime</th>
+              <th>Items</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngIf="completedLaundryRequest.length === 0" class="emptyRequest">
+              <td colspan="6">No completed Requests</td>
+            </tr>
+            <tr *ngFor="let laundryRequest of completedLaundryRequest; let i = index">
+              <td>{{i+1}}</td>
+              <td *ngIf="laundryRequest.guestName !== null">
+                {{laundryRequest.guestName}}
+              </td>
+              <td *ngIf="laundryRequest.guestName === null">
+                Multiple Occupants
+              </td>
+              <td>{{laundryRequest.createdDateTime}}</td>
+              <td>{{laundryRequest.dueDateTime}}</td>
+              <td>{{laundryRequest.completedDateTime}}</td>
+              <td><span class="viewItemSpan" (click)="open(itemsList)">View items</span></td>
+              <td>&#8358; {{laundryRequest.amount | number}}</td>
+              <td class="text-success">{{laundryRequest.statuss}}</td>
+              <ng-template #itemsList let-modal>
+                <div class="modal-header">
+                  <h4 class="modal-title">Items</h4>
+                  <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <ul class="itemListUl">
+                    <li *ngFor="let item of laundryRequest.items">
+                      <span *ngIf="item.quantity === 1">{{item.serviceName}} ({{item.quantity}} piece)</span>
+                      <span *ngIf="item.quantity > 1">{{item.serviceName}} ({{item.quantity}} pieces)</span>
+                    </li>
+                  </ul>
+                </div>
+              </ng-template>
+            </tr>
+            </tbody>
+          </table>
+          <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+            <li class="page-item active">
+              <a class="page-link" href="#">1</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">4</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+          </ul>
+        </div>
+      </tab>
+    </tabset>
+  </div>
+</div>
+
+<ng-template #newLaundryForm let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Create New Laundry</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form #laundryForm="ngForm">
+      <div class="form-group">
+        <label for="roomNumber">Room Number</label>
+        <select id="roomNumber" class="form-control" (change)="getGuestsName()"
+                [(ngModel)]="laundryRequest.roomId" name="roomNumber" required>
+          <option *ngFor="let room of checkedInRooms" [value]="room.roomId"> Room {{room.roomNumber}}</option>
+          <option *ngIf="checkedInRooms.length === 0">
+            No checked in Rooms
+          </option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="name">Guest Name</label>
+        <input type="text" id="name" class="form-control" [(ngModel)]="laundryRequest.guestName" name="guestName" disabled>
+      </div>
+    </form>
+    <form [formGroup]="itemsForm">
+      <div formArrayName="itemDetail">
+        <div *ngFor="let _ of itemForm.controls; let i=index">
+          <div class="row" [formGroupName]="i">
+            <div class="col-md-7">
+              <div class="form-group">
+                <label for="item">
+                  Item <span *ngIf = "itemForm.controls.length > 1">{{i+1}}</span>
+                </label>
+                <select id="item" class="form-control" formControlName="itemName">
+                  <option *ngFor="let service of hotelServices" [value]="service.serviceId">
+                    {{service.serviceName}} (&#8358;{{service.serviceCost}})
+                  </option>
+                  <option *ngIf="hotelServices.length === 0">
+                    No items created yet
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-5">
+              <div class="form-group">
+                <label for="quantity" style="width:100%">Quantity
+                  <span class="pull-right removeForm" *ngIf = "itemForm.controls.length > 1"
+                  (click)="removeItem(i)">Remove
+                  </span>
+                </label>
+                <input type="number" class="form-control" id="quantity" formControlName="quantity" (keyup)="calculateTotalAmount()">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom: 10px">
+          <div class="addFormDiv">
+            <span class="icon-plus font-lg"></span>
+            <span class="addForm" (click)="addItem()">Add new laundry item</span>
+          </div>
+        </div>
+      </div>
+    </form>
+    <form #laundryForm="ngForm">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="requestDate">Due Date</label>
+            <div class="input-group">
+              <input id="requestDate" class="form-control" placeholder="YYYY-MM-DD" name="requestDate" #requestDate="ngModel"
+                     [(ngModel)]="laundryRequest.date" ngbDatepicker #d="ngbDatepicker" [minDate]="minDate" required>
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button"><i class="fa fa-calendar"></i></button>
+              </div>
+            </div>
+            <div *ngIf="requestDate.invalid && (requestDate.dirty || requestDate.touched)" class="validationError">
+              <div *ngIf="requestDate.errors.required">
+                Date is required
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md6">
+          <div class="form-group">
+            <label for="requestTime">Due Time</label>
+            <ngb-timepicker id="requestTime" [(ngModel)]="laundryRequest.time" [meridian]="true" name="requestTime"
+                            [spinners]="false" #requestTime="ngModel" required></ngb-timepicker>
+            <div *ngIf="requestTime.invalid && (requestTime.dirty || requestTime.touched)" class="validationError">
+              <div *ngIf="requestTime.errors.required">
+                Time is required
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-form-label">Payment Status</label>
+        <div class="col-form-label">
+          <div class="form-check form-check-inline mr-3">
+            <input class="form-check-input" type="radio" [(ngModel)]="laundryRequest.paymentStatus" name="paymentStatus"
+                   id="unpaid" value="unpaid" required>
+            <label class="form-check-label" for="unpaid">Unpaid</label>
+          </div>
+          <div class="form-check form-check-inline mr-3">
+            <input class="form-check-input" type="radio" [(ngModel)]="laundryRequest.paymentStatus" name="paymentStatus"
+                   id="paid" value="paid" required>
+            <label class="form-check-label" for="paid">Paid</label>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <span class="serviceTotal">Total: &#8358; {{totalCost | number}}</span>
+    <button type="button" class="btn btn-primary" [disabled]="laundryForm.invalid || itemsForm.invalid || processing"
+            (click)="submitLaundryRequest()">
+      <span *ngIf="processing === false">Create</span>
+      <span *ngIf="processing === true"><i class="fa fa-circle-o-notch fa-spin"></i></span>
+    </button>
+    <button type="button" class="btn pg-danger text-white" (click)="clearLaundryRequest()">Cancel</button>
+  </div>
+</ng-template>
+

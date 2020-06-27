@@ -1,0 +1,200 @@
+<div class="row">
+  <div class="col-sm-12 col-md-6 col-lg-4">
+    <div class="card">
+      <div class="card-header" >
+        Today Statistics
+      </div>
+      <div class="card-body">
+        <table class="table table-responsive-sm table-responsive-md">
+          <tr>
+            <th class="handleBorder">Total Number of Rooms</th>
+            <td class="handleBorder">{{hotelStats.totalNumberOfRooms}}</td>
+          </tr>
+          <tr>
+            <th>Occupied Rooms</th>
+            <td>{{hotelStats.occupiedRooms}}</td>
+          </tr>
+          <tr>
+            <th>Available Rooms</th>
+            <td>{{hotelStats.availableRooms}}</td>
+          </tr>
+          <tr>
+            <th>Total Staffs</th>
+            <td>{{hotelStats.totalStaff}}</td>
+          </tr>
+          <tr>
+            <th>Staffs Currently LoggedIn</th>
+            <td>{{hotelStats.numberOfLoggedInStaff}}</td>
+          </tr>
+          <tr>
+            <th>Total Clean Rooms</th>
+            <td>{{hotelStats.totalOfCleanRooms}}</td>
+          </tr>
+          <tr>
+            <th>Total Lost Key</th>
+            <td>{{hotelStats.currentLostKey}}</td>
+          </tr>
+          <tr>
+            <th>Total Due Out</th>
+            <td>{{hotelStats.dueOut}}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-12 col-md-6 col-lg-4">
+    <div class="card">
+      <div class="card-header" >
+        Current Guests Statistics
+      </div>
+      <div class="card-body">
+        <table class="table table-responsive-sm">
+          <tr>
+            <th class="handleBorder">Total Guests</th>
+            <td class="handleBorder">{{guestsStats.totalGuests}}</td>
+          </tr>
+          <tr>
+            <th>Paying Guest</th>
+            <td>{{guestsStats.payingGuest}}</td>
+          </tr>
+          <tr>
+            <th>Staying Guests</th>
+            <td>{{guestsStats.stayingGuest}}</td>
+          </tr>
+          <tr>
+            <th>Staying and Paying Guests</th>
+            <td>{{guestsStats.stayingPayingGuest}}</td>
+          </tr>
+          <tr>
+            <th>Guests Due Out</th>
+            <td>{{guestsStats.guestDueOut}}</td>
+          </tr>
+          <tr>
+            <th>Expected Guests</th>
+            <td>{{guestsStats.expectedGuest}}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-12 col-md-6 col-lg-4">
+    <div class="card">
+      <div class="card-header" >
+        Today's Activity Count (based on the last 24 hours)
+      </div>
+      <div class="card-body">
+        <table class="table table-responsive-sm">
+          <tr>
+            <th class="handleBorder">Total CheckIn</th>
+            <td class="handleBorder">{{activityCount.numCheckIn}}</td>
+          </tr>
+          <tr>
+            <th>Total CheckOut</th>
+            <td>{{activityCount.numCheckOut}}</td>
+          </tr>
+          <tr>
+            <th>Total Reservations</th>
+            <td>{{activityCount.numOfReservation}}</td>
+          </tr>
+          <tr>
+            <th>Total Cancelled Reservations</th>
+            <td>{{activityCount.numOfCancelledReservation}}</td>
+          </tr>
+          <tr>
+            <th>Total Extend Stay</th>
+            <td>{{activityCount.numOfExtendStay}}</td>
+          </tr>
+          <tr>
+            <th>Total Changed Rooms</th>
+            <td>{{activityCount.numOfRoomsChanged}}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-12 col-md-6 col-lg-4">
+    <div class="card">
+      <div class="card-header" >
+        Cash Register Stats (based on the last 24 hours)
+      </div>
+      <div class="card-body">
+        <table class="table table-responsive-sm">
+          <tr>
+            <th class="handleBorder">Active</th>
+            <td class="handleBorder">{{cashRegisterStats.active}}</td>
+          </tr>
+          <tr>
+            <th>Closed</th>
+            <td>{{cashRegisterStats.closed}}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-6 col-md-4">
+    <div class="card">
+      <div class="card-header" >
+        Revenue Stats (based on the last 24 hours)
+      </div>
+      <div class="card-body">
+        <table class="table table-responsive-sm table-responsive-md">
+          <tr *ngFor="let revenue of revenueStats">
+            <th>{{revenue.billedFor}}</th>
+            <td>&#8358;{{revenue.totalRevenue | number}}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-12 col-md-6 col-lg-4">
+    <div class="card">
+      <div class="card-header">
+        Customer Service Stats
+      </div>
+      <div class="card-body">
+        <table class="table table-responsive">
+          <thead>
+          <tr>
+            <th class="handleBorder"></th>
+            <th class="handleBorder">Unprocessed</th>
+            <th class="handleBorder">Processing</th>
+            <th class="handleBorder">Completed</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>Room Service</td>
+            <td>{{customerServiceStats.roomService.unprocessed}}</td>
+            <td>{{customerServiceStats.roomService.processing}}</td>
+            <td>{{customerServiceStats.roomService.completed}}</td>
+          </tr>
+          <tr>
+            <td>Laundry Service</td>
+            <td>{{customerServiceStats.laundryService.unprocessed}}</td>
+            <td>{{customerServiceStats.laundryService.processing}}</td>
+            <td>{{customerServiceStats.laundryService.completed}}</td>
+          </tr>
+          <tr>
+            <td>House Keeping</td>
+            <td>{{customerServiceStats.housekeeping.unprocessed}}</td>
+            <td>{{customerServiceStats.housekeeping.processing}}</td>
+            <td>{{customerServiceStats.housekeeping.completed}}</td>
+          </tr>
+          <tr>
+            <td>Issues/Comments</td>
+            <td>{{customerServiceStats.issuesComments.unprocessed}}</td>
+            <td>{{customerServiceStats.issuesComments.processing}}</td>
+            <td>{{customerServiceStats.issuesComments.completed}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+

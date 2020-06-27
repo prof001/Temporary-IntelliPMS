@@ -1,0 +1,22 @@
+img {
+  margin-top: 15px;
+}
+
+#mainForm {
+  display: flex;
+  justify-content: center;
+}
+
+input[type='file'] {
+  display: none;
+}
+
+.validationError {
+  color: #BF0808;
+  margin-left: 5px;
+}
+
+.ng-invalid.ng-touched {
+  border-color: #BF0808;
+}
+

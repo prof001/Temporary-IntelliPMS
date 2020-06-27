@@ -1,0 +1,64 @@
+.icon-book-open {
+  font-size: 170px;
+}
+
+#emptyCashRegister {
+  display: flex;
+  flex-direction: column;
+  margin-top: 8%;
+  align-items: center;
+  line-height: 70px;
+}
+
+#emptyCashRegister div {
+  font-size: 30px;
+}
+
+.introInfo {
+  font-size: 16px;
+  margin-top: 10px;
+  font-weight: 600;
+}
+
+table {
+  margin-top: 35px;
+  background-color: white;
+}
+
+tfoot {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+#billCardTableDiv {
+  margin: 0 15px;
+}
+
+#billCardTableDiv table {
+  width: 100%;
+  line-height: 25px;
+}
+
+hr {
+  width:150%
+}
+
+#billCardDateDiv {
+  display: flex;
+  justify-content: space-between;
+  padding: 3px 15px;
+}
+
+#billCardDateDiv * {
+  font-weight: 500;
+}
+
+#billOwner {
+  font-size: 19px;
+  font-weight: 700;
+  padding-bottom: 10px;
+}
+
+.displayer {
+  text-transform: capitalize;
+}

@@ -1,0 +1,22 @@
+.header-reserved {
+  background-color: #1765CB;
+  color: white;
+}
+
+.caret {
+  color: white;
+}
+
+.startDateError {
+  color: #BF0808;
+}
+
+.filters {
+  display: flex;
+  margin-bottom: 15px;
+  justify-content: flex-end;
+}
+
+.fa-close {
+  color: #BF0808;
+}

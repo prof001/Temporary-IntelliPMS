@@ -1,0 +1,41 @@
+.bg-info:hover {
+  color: white;
+}
+
+#billCardTableDiv {
+  margin: 5px 15px;
+}
+
+#billCardTableDiv table {
+  width: 100%;
+}
+
+hr {
+  width:150%
+}
+
+#billCardDateDiv {
+  display: flex;
+  justify-content: space-between;
+  padding: 3px 15px;
+}
+
+#billCardDateDiv * {
+  font-weight: 500;
+}
+
+#billOwner {
+  font-size: 19px;
+  font-weight: 700;
+  padding-bottom: 10px;
+}
+
+.printer-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+#print-section {
+  width: 50%;
+  display: none;
+}

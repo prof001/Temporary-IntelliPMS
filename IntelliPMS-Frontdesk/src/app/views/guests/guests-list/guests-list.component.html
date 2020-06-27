@@ -1,0 +1,137 @@
+<div class="col-lg-12" id="receiptId">
+  <div class="card">
+    <div class="card-header">
+      <i class="fa fa-align-justify"></i> Guests List
+    </div>
+    <div class="card-body">
+      <table class="table table-responsive-sm table-responsive-md">
+        <thead>
+        <tr>
+          <th>sn</th>
+          <th>Name</th>
+          <th>Room Number</th>
+          <th>Room Type</th>
+          <th>Guest Type</th>
+          <th>Checkin Date</th>
+          <th>Checkout Date</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let guest of guestList; let i = index">
+          <td>{{i+1}}</td>
+          <td>{{guest.guestName}}</td>
+          <td>Room {{guest.roomNumber}}</td>
+          <td>{{guest.roomTypeName}}</td>
+          <td *ngIf="guest.guestType == '1'">Paying guest</td>
+          <td *ngIf="guest.guestType == '2'">Staying guest</td>
+          <td *ngIf="guest.guestType == '3'">Staying and paying guest</td>
+          <td>{{guest.formattedCheckInDate}}</td>
+          <td>{{guest.formattedCheckOutDate}}</td>
+          <td *ngIf="guest.guestType != '2'">
+            <button class="btn btn-info bg-info" [routerLink]="['/cash-register/payment', guest.checkInId]">Pay Extra</button>
+            <button class="btn btn-info bg-info" (click)="open(userBill, guest.checkInId, guest.roomId)">View Bill</button>
+          </td>
+          <ng-template #userBill let-modal>
+            <div class="modal-header">
+              <h4 class="modal-title">User Bill</h4>
+              <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div id="billCardDateDiv">
+                <div>
+                  <span id="billOwner">{{guest.guestName}}</span>
+                  <!--<span>#25160</span>-->
+                </div>
+                <div>
+                  <!--9/3/2020 3:04 PM-->
+                  {{currentTime}}
+                </div>
+              </div>
+              <div id="billCardTableDiv">
+                <table>
+                  <tr>
+                    <td>Stay</td>
+                    <td>{{guestBills.daysSpent}} * &#8358; {{guestBills.cost | number}}</td>
+                  </tr>
+                  <tr *ngFor="let bill of guestBills.otherRoomsStay">
+                    <td>Room {{bill.roomNumber}}(Old room):</td>
+                    <td>{{bill.oldRoomStayDays}} * &#8358; {{bill.calculatedAmount}}</td>
+                  </tr>
+                  <tr *ngFor="let bill of guestBills.extendStay">
+                    <td *ngIf="bill.extensionLength === 1">Extend Stay ({{bill.extensionLength}} hour - {{bill.rate}}%):</td>
+                    <td *ngIf="bill.extensionLength > 1">Extend Stay ({{bill.extensionLength}} hours - {{bill.rate}}%):</td>
+                    <td>&#8358; {{bill.cost}}</td>
+                  </tr>
+                  <tr *ngFor="let bill of guestBills.debits">
+                    <td>{{bill.service}}:</td>
+                    <td>&#8358; {{bill.amount}}</td>
+                  </tr>
+                  <hr/>
+                  <tr style="font-size: 16px; font-weight: 600">
+                    <td>Total:</td>
+                    <td>&#8358; {{totalDebits | number}}</td>
+                  </tr>
+                </table>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-primary pull-right" (click)="print()">Print</button>
+                <button class="btn btn-danger pull-right" (click)="modal.close()">Close</button>
+
+              </div>
+            </div>
+          </ng-template>
+        </tr>
+        </tbody>
+      </table>
+      <ul class="pagination">
+        <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+        <li class="page-item active">
+          <a class="page-link" href="#">1</a>
+        </li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item"><a class="page-link" href="#">4</a></li>
+        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="card" id="print-section">
+  <div class="card-header printer-header">
+    <div>
+      <span>ReceiptID: </span>
+      <span>#25160</span>
+    </div>
+    <div>
+      9/3/2020 3:04 PM
+    </div>
+  </div>
+  <div class="card-body">
+    <table>
+      <tr>
+        <td colspan="2">Miss Malabo Malik</td>
+      </tr>
+      <tr>
+        <td>Accommodation:</td>
+        <td>&#8358; 35000</td>
+      </tr>
+      <tr>
+        <td>Feeding:</td>
+        <td>&#8358; 2500</td>
+      </tr>
+      <tr>
+        <td>Laundry:</td>
+        <td>&#8358; 5000</td>
+      </tr>
+      <hr/>
+      <tr style="font-size: 16px; font-weight: 600">
+        <td>Total:</td>
+        <td>&#8358; 60000</td>
+      </tr>
+    </table>
+  </div>
+</div>

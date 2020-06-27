@@ -1,0 +1,298 @@
+<div class="headerBanner ml-auto">
+  <span class="icon-wallet amount" *ngIf="totalBalance >= 0"></span>
+  <span class="icon-wallet errorAmount" *ngIf="totalBalance < 0"></span>
+  <span class="amount" *ngIf="totalBalance >= 0">&#8358; {{totalBalance | number}}</span>
+  <span class="errorAmount" *ngIf="totalBalance < 0">&#8358; {{totalBalance | number}}</span>
+</div>
+<div class="pageTitleDiv">
+  <div class="pageTitle mx-auto">
+    GUEST BILL BALANCE
+  </div>
+</div>
+<div class="mainDiv">
+  <div class="infoDiv">
+    <div class="infoHeadingDiv">GUEST INFORMATION</div>
+    <div class="infoDetailsDiv">
+      <div>
+        <span>Name</span>
+        <span>{{guestBillsBalance.guestName}}</span>
+      </div>
+      <div>
+        <span>Phone number</span>
+        <span>{{guestBillsBalance.phoneNumber}}</span>
+      </div>
+      <div>
+        <span>Email</span>
+        <span>{{guestBillsBalance.email}}</span>
+      </div>
+    </div>
+  </div>
+  <div class="infoDiv">
+    <div class="infoHeadingDiv">DEPOSIT(S)</div>
+    <div class="infoDetailsDiv">
+      <div *ngFor="let deposit of guestBillsBalance.deposits">
+        <span>{{deposit.paymentType}} (during {{deposit.billedFor}})</span>
+        <span>&#8358;{{deposit.amount | number}}</span>
+      </div>
+      <hr />
+      <div class="totalDiv">
+        <span>Total Payment(s)</span>
+        <span>&#8358;{{guestBillsBalance.totalDeposits | number}}</span>
+      </div>
+    </div>
+  </div>
+  <div class="infoDiv">
+    <div class="infoHeadingDiv">DEBITS</div>
+    <div class="infoDetailsDiv">
+      <div>
+        <span>Stay</span>
+        <span>{{guestBillsBalance.daysSpent}} * &#8358; {{guestBillsBalance.cost | number}}</span>
+      </div>
+      <div *ngFor="let service of guestBillsBalance.otherRoomsStay">
+        <span>Room {{service.roomNumber}}(Old room)</span>
+        <span>{{service.oldRoomStayDays}} * &#8358; {{service.calculatedAmount}}</span>
+      </div>
+      <div *ngFor="let service of guestBillsBalance.extendStay">
+        <span *ngIf="service.extensionLength === 1">Extend Stay ({{service.extensionLength}} hour - {{service.rate}}%)</span>
+        <span *ngIf="service.extensionLength > 1">Extend Stay ({{service.extensionLength}} hours - {{service.rate}}%)</span>
+        <span>&#8358; {{service.cost}}</span>
+      </div>
+      <div *ngFor="let debit of guestBillsBalance.debits">
+        <span>{{debit.service}}</span>
+        <span>&#8358; {{debit.amount | number}}</span>
+      </div>
+      <hr />
+      <div class="totalDiv">
+        <span>Total Bills</span>
+        <span>&#8358; {{guestBillsBalance.totalDebits | number}}</span>
+      </div>
+    </div>
+    <div class="registerErrorDiv" *ngIf="totalBalance >= 0">
+      <div class="unOpenedRegisterDiv" *ngIf="registerId === null">
+        <span class="fa fa-times-circle"></span>
+        Please open a cash register.
+      </div>
+      <div class="unOpenedRegisterDiv" *ngIf="registerHourExceeded">
+        <span class="fa fa-times-circle"></span>
+        Opened cash register has exceeded 24 hours. Please open another one.
+      </div>
+    </div>
+  </div>
+
+
+  <div class="infoDiv" *ngIf="totalBalance > 0">
+    <div class="infoHeadingDiv">MAKE REFUND</div>
+    <div class="billingsDiv">
+      <form>
+        <div class="card">
+          <div class="card-header">
+            <strong>
+              Refund Form
+            </strong>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label for="refundMethod">Refund Method<span class="compulsory">*</span></label>
+              <select id="refundMethod" class="form-control" [(ngModel)]="refundMethod" (change)="refundChecker()" name="refundMethod">
+                <option value="keep">Keep money</option>
+                <option value="refund">Refund to bank account</option>
+              </select>
+            </div>
+            <div [class.bankDetails]="hideRefund">
+              <div class="form-group">
+                <label for="refundMethod">Bank Name<span class="compulsory">*</span></label>
+                <select id="bankName" class="form-control" [(ngModel)]="guestBankName" name="guestBankName">
+                  <option *ngFor="let banks of banksList" [value]="banks">{{banks}}</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="refundMethod">Account Number<span class="compulsory">*</span></label>
+                <input type="number" class="form-control" [(ngModel)]="guestAccountNumber" name="guestAccountNumber"
+                       placeholder="Enter guest's account number">
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="infoDiv" *ngIf="totalBalance < 0">
+    <div class="infoHeadingDiv">MAKE PAYMENT</div>
+    <div class="billingsDiv">
+      <form class="form-group" [formGroup]="billingForm">
+        <div class="row centred">
+          <div class="col-md-12" formArrayName="paymentDetails">
+            <div *ngFor="let _ of paymentForm.controls; let i=index">
+              <div class="card">
+                <div class="card-header">
+                  <strong>
+                    Make Payment <span *ngIf = "paymentForm.controls.length > 1">{{i+1}}</span>
+                  </strong>
+                  <span *ngIf="paymentForm.controls.length > 1"
+                        (click)="removePayment(i)" class="pull-right removeForm">Remove
+                  </span>
+                </div>
+                <div class="card-body" [formGroupName]="i">
+                  <div class="form-group">
+                    <label class="col-form-label">Payment Method</label>
+                    <div class="col-form-label">
+                      <div class="form-check form-check-inline mr-3">
+                        <input class="form-check-input" type="radio" formControlName="paymentType"
+                               id="card" value="card" (click)="togglePaymentForm(0, i)">
+                        <label class="form-check-label" for="card">Card</label>
+                      </div>
+                      <div class="form-check form-check-inline mr-3">
+                        <input class="form-check-input" type="radio" formControlName="paymentType"
+                               id="transfer" value="transfer" (click)="togglePaymentForm(1, i)">
+                        <label class="form-check-label" for="cash">Transfer</label>
+                      </div>
+                      <div class="form-check form-check-inline mr-3">
+                        <input class="form-check-input" type="radio" formControlName="paymentType"
+                               id="cash" value="cash" (click)="togglePaymentForm(2, i)">
+                        <label class="form-check-label" for="cash">Cash</label>
+                      </div>
+                      <div class="form-check form-check-inline mr-3">
+                        <input class="form-check-input" type="radio" formControlName="paymentType"
+                               id="managerCredit" value="Manager Credit" (click)="togglePaymentForm(3, i)">
+                        <label class="form-check-label" for="cash">Manager Credit</label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div [style.display]="inputsDisplay[i].showCardInput">
+                    <div class="form-group">
+                      <label for="bank">Bank<span class="compulsory">*</span></label>
+                      <select id="bank" (change)="bankPosClicked($event.target, i)" formControlName="bankName" class="form-control" required>
+                        <option *ngFor="let pos of hotelPosDetails" [value]="pos.posSn">
+                          {{pos.bankName}}
+                        </option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label>Pos Id<span class="compulsory">*</span></label>
+                      <div class="accountDisplayDiv">
+                        <span class="accountDisplayText" *ngIf="paymentChoices.length > i">{{paymentChoices[i].cardPayment.posId}}</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="transactionId">Transaction Id<span class="compulsory">*</span></label>
+                      <input type="text" id="transactionId" formControlName="transactionId"
+                             class="form-control" placeholder="Enter transaction Id">
+                    </div>
+                    <div class="form-group">
+                      <label for="amount1">Amount<span class="compulsory">*</span></label>
+                      <input type="number" id="amount1" formControlName="amount" class="form-control" placeholder="Enter Amount"
+                             (keyup)="checkOutButtonActivator()">
+                      <div class="unOpenedRegisterDiv" *ngIf="registerId === null">
+                        <span class="fa fa-times-circle"></span>
+                        Please open a cash register.
+                      </div>
+                      <div class="unOpenedRegisterDiv" *ngIf="registerHourExceeded">
+                        <span class="fa fa-times-circle"></span>
+                        Opened cash register has exceeded 24 hours. Please open another one.
+                      </div>
+                    </div>
+                  </div>
+                  <div [style.display]="inputsDisplay[i].showCashInput">
+                    <div class="form-group">
+                      <label for="amount2">Amount<span class="compulsory">*</span></label>
+                      <input type="number" id="amount2" formControlName="amount" class="form-control" placeholder="Enter Amount"
+                             (keyup)="checkOutButtonActivator()">
+                      <div class="unOpenedRegisterDiv" *ngIf="registerId === null">
+                        <span class="fa fa-times-circle"></span>
+                        Please open a cash register.
+                      </div>
+                      <div class="unOpenedRegisterDiv" *ngIf="registerHourExceeded">
+                        <span class="fa fa-times-circle"></span>
+                        Opened cash register has exceeded 24 hours. Please open another one.
+                      </div>
+                    </div>
+                  </div>
+                  <div [style.display]="inputsDisplay[i].showTransferInput">
+                    <div class="form-group">
+                      <label for="bank2">Bank<span class="compulsory">*</span></label>
+                      <select id="bank2" (change)="bankAccountClicked($event.target, i)" formControlName="bankName" class="form-control">
+                        <option *ngFor="let account of hotelAccountDetails" [value]="account.bankAccountId">
+                          {{account.bankName}}
+                        </option>
+                      </select>
+                      <!--<div *ngIf="bank2.invalid && (bank2.dirty || bank2.touched) && bank2.errors.required" class="validationError">
+                        Bank is required
+                      </div>-->
+                    </div>
+                    <div class="form-group">
+                      <label>Account Number<span class="compulsory">*</span></label>
+                      <div class="accountDisplayDiv">
+                        <span class="accountDisplayText" *ngIf="paymentChoices.length > i">{{paymentChoices[i].transferPayment.accountNumber}}</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="transactionId2">Transaction Id<span class="compulsory">*</span></label>
+                      <input type="text" id="transactionId2" class="form-control" formControlName="transactionId" placeholder="Enter transaction Id">
+                      <!--<div *ngIf="transactionId2.invalid && (transactionId2.dirty || transactionId2.touched) && transactionId2.errors.required" class="validationError">
+                        Transaction ID is required
+                      </div>-->
+                    </div>
+                    <div class="form-group">
+                      <label for="amount3">Amount<span class="compulsory">*</span></label>
+                      <input type="number" id="amount3" formControlName="amount" class="form-control" placeholder="Enter Amount"
+                             (keyup)="checkOutButtonActivator()">
+                      <div class="unOpenedRegisterDiv" *ngIf="registerId === null">
+                        <span class="fa fa-times-circle"></span>
+                        Please open a cash register.
+                      </div>
+                      <div class="unOpenedRegisterDiv" *ngIf="registerHourExceeded">
+                        <span class="fa fa-times-circle"></span>
+                        Opened cash register has exceeded 24 hours. Please open another one.
+                      </div>
+                    </div>
+                  </div>
+                  <div [style.display]="inputsDisplay[i].showManagerInput">
+                    <div class="form-group">
+                      <label for="managerName">Manager Name<span class="compulsory">*</span></label>
+                      <select id="managerName" formControlName="managerName" class="form-control">
+                        <option *ngFor="let manager of managers" [value]="manager.employeeId">{{manager.employeeName}}</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="referenceNumber">Reference Number<span class="compulsory">*</span></label>
+                      <input type="text" id="referenceNumber" class="form-control" formControlName="referenceNumber" placeholder="Enter Reference Number">
+                    </div>
+                    <div class="form-group">
+                      <label for="amount4">Amount<span class="compulsory">*</span></label>
+                      <input type="number" id="amount4" formControlName="amount" class="form-control" placeholder="Enter Amount"
+                             (keyup)="checkOutButtonActivator()">
+                      <div class="unOpenedRegisterDiv" *ngIf="registerId === null">
+                        <span class="fa fa-times-circle"></span>
+                        Please open a cash register.
+                      </div>
+                      <div class="unOpenedRegisterDiv" *ngIf="registerHourExceeded">
+                        <span class="fa fa-times-circle"></span>
+                        Opened cash register has exceeded 24 hours. Please open another one.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="margin-bottom: 12px">
+              <div (click)="addPayment()" class="addFormDiv">
+                <span class="icon-plus font-lg"></span>
+                <span class="addForm">Add new billing detail</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="btnDiv">
+  <button class="btn btn-primary btnPrimary">Print</button>
+  <button class="btn btn-lg btnDark" (click)="checkOut()" [disabled]="deactivateCheckOutButton || processing || registerId === null">
+    <span *ngIf="processing === false">Checkout</span>
+    <span *ngIf="processing === true"><i class="fa fa-circle-o-notch fa-spin"></i></span>
+  </button>
+</div>

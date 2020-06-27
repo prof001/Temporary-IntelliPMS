@@ -1,0 +1,34 @@
+img {
+  margin-top: 15px;
+}
+
+#mainForm {
+  display: flex;
+  justify-content: center;
+}
+
+input[type='file'] {
+  display: none;
+}
+
+.addFormDiv * {
+  vertical-align: middle;
+}
+
+.addForm {
+  cursor: pointer;
+  color: #0143A3;
+}
+
+.addForm:hover {
+  text-decoration: underline;
+}
+
+.removeForm {
+  cursor: pointer;
+  color: #BF0808;
+}
+
+.removeForm:hover {
+  text-decoration: underline;
+}

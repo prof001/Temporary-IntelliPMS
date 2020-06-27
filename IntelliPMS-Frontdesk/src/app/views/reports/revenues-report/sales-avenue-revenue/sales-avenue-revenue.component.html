@@ -1,0 +1,54 @@
+<div class="row">
+  <div class="col-lg-1"></div>
+  <div class="col-lg-10">
+    <div class="card">
+      <div class="card-header">
+        Rooms Category Revenue
+      </div>
+      <div class="card-body">
+        <table class="table table-responsive-sm table-outline table-hover">
+          <thead class="thead-light">
+          <tr>
+            <th>Sn</th>
+            <th>Property</th>
+            <th>Room Revenue</th>
+            <th>F&D Revenue</th>
+            <th>F&B Revenue</th>
+            <th>Other Revenue</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let category of categoryList; let i = index">
+            <td>{{i+1}}</td>
+            <td>{{category.roomCategory}}</td>
+            <td>{{category.roomRevenue}}</td>
+            <td>{{category.fdRevenue}}</td>
+            <td>{{category.fbRevenue}}</td>
+            <td>{{category.otherRevenue}}</td>
+          </tr>
+          </tbody>
+          <tfoot>
+          <tr>
+            <td colspan="2">Total</td>
+            <td>50000</td>
+            <td>70000</td>
+            <td>50000</td>
+            <td>80000</td>
+          </tr>
+          </tfoot>
+        </table>
+        <ul class="pagination">
+          <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+          <li class="page-item active">
+            <a class="page-link" href="#">1</a>
+          </li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item"><a class="page-link" href="#">4</a></li>
+          <li class="page-item"><a class="page-link" href="#">Next</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-1"></div>
+</div>

@@ -1,0 +1,301 @@
+<alert type="info" dismissible="true"  *ngIf="roomServiceRequestAlert == true">
+  Room service has been created successfully
+</alert>
+
+<div id="createRoomServiceDiv">
+  <button class="btn btn-primary" (click)="open(newRoomServiceForm)">
+    <span class="fa fa-plus"></span> Create Room Service Request
+  </button>
+</div>
+
+<div class="col-12">
+  <div class="card">
+    <tabset>
+      <tab>
+        <ng-template tabHeading><i class="fa fa-tasks"></i> Unprocessed Room Service Requests &nbsp;<span class="badge badge-pill badge-danger">
+          {{unprocessedRoomServiceRequestsNumber}}
+        </span></ng-template>
+        <div>
+          <table class="table table-responsive-sm table-responsive-md">
+            <thead>
+            <tr>
+              <th>Sn</th>
+              <th>Guest Name</th>
+              <th>Room Number</th>
+              <th>Created DateTime</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngIf="unprocessedRoomServiceRequest.length === 0" class="emptyRequest">
+              <td colspan="8">No unprocessed requests</td>
+            </tr>
+            <tr *ngFor="let roomService of unprocessedRoomServiceRequest; let i = index">
+              <td>{{i+1}}</td>
+              <td *ngIf="roomService.guestName !== null">
+                {{roomService.guestName}}
+              </td>
+              <td *ngIf="roomService.guestName === null">
+                Multiple Occupants
+              </td>
+              <td>{{roomService.roomNumber}}</td>
+              <td>{{roomService.createdDateTime}}</td>
+              <td>&#8358;{{roomService.amount | number}}</td>
+              <td class="text-danger">{{roomService.statuss}}</td>
+              <td><button class="btn btn-sm btn-primary" [disabled]="processing"
+                          (click)="updateRoomServiceRequest('processing', roomService.roomServiceId)">
+                <span *ngIf="processing === false">Start Processing</span>
+                <span *ngIf="processing === true"><i class="fa fa-circle-o-notch fa-spin"></i></span>
+              </button></td>
+            </tr>
+            </tbody>
+          </table>
+          <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+            <li class="page-item active">
+              <a class="page-link" href="#">1</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">4</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+          </ul>
+        </div>
+      </tab>
+      <tab>
+        <ng-template tabHeading><i class="fa fa-circle-o-notch fa-spin"></i> Processing Room Service Requests</ng-template>
+        <div>
+          <table class="table table-responsive-sm table-responsive-md">
+            <thead>
+            <tr>
+              <th>Sn</th>
+              <th>Guest Name</th>
+              <th>Room Number</th>
+              <th>Created DateTime</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+              <tr *ngIf="processingRoomServiceRequest.length === 0" class="emptyRequest">
+                <td colspan="7">No processing requests</td>
+              </tr>
+              <tr *ngFor="let roomService of processingRoomServiceRequest; let i = index">
+                <td>{{i+1}}</td>
+                <td *ngIf="roomService.guestName !== null">
+                  {{roomService.guestName}}
+                </td>
+                <td *ngIf="roomService.guestName === null">
+                  Multiple Occupants
+                </td>
+                <td>{{roomService.roomNumber}}</td>
+                <td>{{roomService.createdDateTime}}</td>
+                <td>&#8358;{{roomService.amount | number}}</td>
+                <td class="text-warning">{{roomService.statuss}}</td>
+                <td><button class="btn btn-success btn-sm" [disabled]="processing"
+                            (click)="updateRoomServiceRequest('completed', roomService.roomServiceId)">
+                  <span *ngIf="processing === false">Completed</span>
+                  <span *ngIf="processing === true"><i class="fa fa-circle-o-notch fa-spin"></i></span>
+                </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+            <li class="page-item active">
+              <a class="page-link" href="#">1</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">4</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+          </ul>
+        </div>
+      </tab>
+      <tab>
+        <ng-template tabHeading><i class="fa fa-check-circle text-success"></i> Completed Room Service Requests</ng-template>
+        <div>
+          <table class="table table-responsive-sm table-responsive-md">
+            <thead>
+            <tr>
+              <th>Sn</th>
+              <th>Guest Name</th>
+              <th>Room Number</th>
+              <th>Created DateTime</th>
+              <th>Completed DateTime</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngIf="completedRoomServiceRequest.length === 0" class="emptyRequest">
+              <td colspan="7">No completed requests</td>
+            </tr>
+            <tr *ngFor="let roomService of completedRoomServiceRequest; let i = index">
+              <td>{{i+1}}</td>
+              <td *ngIf="roomService.guestName !== null">
+                {{roomService.guestName}}
+              </td>
+              <td *ngIf="roomService.guestName === null">
+                Multiple Occupants
+              </td>
+              <td>{{roomService.roomNumber}}</td>
+              <td>{{roomService.createdDateTime}}</td>
+              <td>{{roomService.completedDateTime}}</td>
+              <td>&#8358;{{roomService.amount | number}}</td>
+              <td class="text-success">{{roomService.statuss}}</td>
+            </tr>
+            </tbody>
+          </table>
+          <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+            <li class="page-item active">
+              <a class="page-link" href="#">1</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">4</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+          </ul>
+        </div>
+      </tab>
+    </tabset>
+  </div>
+</div>
+
+<ng-template #newRoomServiceForm let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">New Room Service</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form #roomServiceForm="ngForm">
+      <div class="form-group">
+        <label for="roomNumber">Room Number</label>
+        <select id="roomNumber" class="form-control" [(ngModel)]="roomServiceRequest.roomId" #roomNumber="ngModel"
+                (change)="getGuestName()" name="roomNumber" required>
+          <option *ngFor="let room of checkedInRooms" [value]="room.roomId">Room {{room.roomNumber}}</option>
+          <option *ngIf="checkedInRooms.length === 0">
+            No checked in rooms
+          </option>
+        </select>
+        <div *ngIf="roomNumber.invalid && (roomNumber.dirty || roomNumber.touched) && roomNumber.errors.required" class="validationError">
+          Room number is required
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="name">Guest Name</label>
+        <input type="text" id="name" class="form-control" [(ngModel)]="roomServiceRequest.guestName" name="guestName" disabled>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="invoice">Invoice ID</label>
+            <input type="text" id="invoice" class="form-control" name="invoice" [(ngModel)]="roomServiceRequest.invoiceId"
+                   #invoice="ngModel" required>
+            <div *ngIf="invoice.invalid && (invoice.dirty || invoice.touched) && invoice.errors.required" class="validationError">
+              Invoice is required
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="waiter">Waiter</label>
+            <select id="waiter" class="form-control" [(ngModel)]="roomServiceRequest.waiterId" name="waiter"
+                    #waiter="ngModel" required>
+              <option *ngFor="let waiter of waiters" [value]="waiter.employeeId">{{waiter.employeeName}}</option>
+              <option *ngIf="waiters.length === 0">
+                No Waiter created yet
+              </option>
+            </select>
+            <div *ngIf="waiter.invalid && (waiter.dirty || waiter.touched) && waiter.errors.required" class="validationError">
+              Waiter is required
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="requestDate">Date</label>
+            <div class="input-group">
+              <input id="requestDate" class="form-control" placeholder="YYYY-MM-DD" #requestDate="ngModel" [minDate]="minDate"
+                     name="dp" [(ngModel)]="roomServiceRequest.date" ngbDatepicker #d="ngbDatepicker" required>
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button"><i class="fa fa-calendar"></i></button>
+              </div>
+            </div>
+            <div *ngIf="requestDate.invalid && (requestDate.dirty || requestDate.touched)" class="validationError">
+              <div *ngIf="requestDate.errors.required">
+                Date is required
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="requestTime">Time</label>
+            <ngb-timepicker id="requestTime" [(ngModel)]="roomServiceRequest.time" name="requestTime" [meridian]="true" [spinners]="false"
+                            #requestTime="ngModel" required></ngb-timepicker>
+            <div *ngIf="requestTime.invalid && (requestTime.dirty || requestTime.touched)" class="validationError">
+              <div *ngIf="requestTime.errors.required">
+                Time is required
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="itemsNumber">Number of Items</label>
+            <input type="number" id="itemsNumber" class="form-control" name="itemsNumber" [(ngModel)]="roomServiceRequest.numOfItems"
+                   #itemsNumber="ngModel" required>
+            <div *ngIf="itemsNumber.invalid && (itemsNumber.dirty || itemsNumber.touched) && itemsNumber.errors.required"
+                 class="validationError">
+              Number of items is required
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="amount">Amount</label>
+            <input type="number" id="amount" class="form-control" name="amount" [(ngModel)]="roomServiceRequest.amount"
+                   #amount="ngModel" required>
+            <div *ngIf="amount.invalid && (amount.dirty || amount.touched) && amount.errors.required" class="validationError">
+              Amount is required
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-form-label">Payment Status</label>
+        <div class="col-form-label">
+          <div class="form-check form-check-inline mr-3">
+            <input class="form-check-input" type="radio" [(ngModel)]="roomServiceRequest.paymentStatus" name="paymentStatus"
+                   id="unpaid" value="unpaid" required>
+            <label class="form-check-label" for="unpaid">Unpaid</label>
+          </div>
+          <div class="form-check form-check-inline mr-3">
+            <input class="form-check-input" type="radio" [(ngModel)]="roomServiceRequest.paymentStatus" name="paymentStatus"
+                   id="paid" value="paid" required>
+            <label class="form-check-label" for="paid">Paid</label>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" [disabled]="roomServiceForm.invalid || processing"
+            (click)="submitRoomServiceRequest()">
+      <span *ngIf="processing === false">Create</span>
+      <span *ngIf="processing === true"><i class="fa fa-circle-o-notch fa-spin"></i></span>
+    </button>
+  </div>
+</ng-template>

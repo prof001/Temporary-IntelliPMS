@@ -1,0 +1,82 @@
+<div id="mainForm" class="mainForm">
+  <div class="col-sm-10 col-md-10 col-md-8">
+    <div class="card">
+      <div class="card-header">
+        <strong>Edit Hotel Information</strong>
+      </div>
+      <div class="card-body">
+        <form class="form-group" [formGroup]="form" novalidate (ngSubmit)="onSave()">
+          <div class="row">
+            <div class="col-6">
+              <div>
+                <label for="hotel-name">Name</label>
+                <input
+                  type="text"
+                  formControlName="hotelName"
+                  minlength="3"
+                  class="form-control"
+                  id="hotel-name"
+                  placeholder="Enter hotel name"
+                  required >
+                <span class="validationError" *ngIf="(hotelName.dirty || hotelName.touched) && hotelName.invalid && hotelName.errors.required">
+                  The hotel name is required
+                </span>
+                <span class="validationError" *ngIf="(hotelName.dirty || hotelName.touched) && hotelName.invalid && hotelName.errors.minlength">
+                  Hotel name must be atleast 3 characters
+                </span>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label for="rooms-number">Number of Rooms</label>
+                <input
+                  type="number"
+                  formControlName="numOfRooms"
+                  required
+                  class="form-control"
+                  id="rooms-number"
+                  placeholder="Enter number of rooms in the hotel"
+                >
+                <div class="validationError" *ngIf="(numOfRooms.dirty || numOfRooms.touched) && numOfRooms.invalid && numOfRooms.errors.required">
+                  The hotel's number of rooms is required
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="address">Address</label>
+            <textarea id="address" formControlName="address" required class="form-control" style="height: 100px"></textarea>
+            <div class="validationError" *ngIf="(address.dirty || address.touched) && address.invalid && address.errors.required">
+              The address of hotel is required
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="location">Location</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="location"
+              required
+              id="location"
+              placeholder="Enter city and country where hotel is located"
+            >
+            <div class="validationError" *ngIf="(location.dirty || location.touched) && location.invalid && location.errors.required">
+              The location of hotel is required
+            </div>
+          </div>
+          <div class="form-group">
+            <button type="button" class="btn btn-primary" (click)="filePicker.click()">Choose Hotel Image</button> <br/>
+            <input type="file" accept="image/*" id="picture" class="form-control" #filePicker (change)="showPreview($event)">
+            <div *ngIf="imageUrl && imageUrl !== ''">
+              <img [src]="imageUrl" alt="Hotel Picture" height="250px" width="430px">
+            </div>
+            <div class="validationError" *ngIf="(picture.dirty || picture.touched) && picture.invalid && picture.errors.required">
+              The image of hotel is required
+            </div>
+          </div>
+          <button class="btn btn-lg btn-primary float-right" type="submit" [disabled]="!form.valid" >Save</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,27 @@
+.centred {
+  display: flex;
+  justify-content: center;
+}
+
+.selectRoomDiv {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.billingInfoDiv tr td:nth-child(1) {
+  width:70%
+}
+
+table.billingInfoDiv {
+  line-height: 27px;
+}
+
+hr {
+  width: 140%
+}
+
+#balanceTr {
+  font-size: 15px;
+  font-weight: 600;
+}

@@ -1,0 +1,42 @@
+.badge-secondary {
+  padding: 10px;
+}
+
+#control-buttons {
+  display: flex;
+  margin-bottom: 15px;
+  justify-content: flex-end;
+}
+
+#roomTypeDiv {
+  margin-bottom: 0;
+}
+
+#control-buttons button {
+  margin-left: 10px;
+}
+
+input[type='file'] {
+  display: none;
+}
+
+.roomsList {
+  margin-top: 40px;
+}
+
+.successAlert {
+  background-color: #4DBD74;
+  color: white;
+}
+
+#majorInfo table td {
+  padding-left: 10px;
+}
+
+#noRooms {
+  color: #BF0808;
+  font-size: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}

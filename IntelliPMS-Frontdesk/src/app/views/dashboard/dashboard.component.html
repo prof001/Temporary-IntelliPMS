@@ -1,0 +1,368 @@
+<div class="row" id="timeDiv">
+  <div class="col-md-6 col-sm-12">
+    <span class="fa fa-calendar mr-2" style="font-size: 27px"></span>{{currentTime}}
+  </div>
+  <div class="col-md-6 col-sm-12">
+    <span class="pull-right"> Welcome {{employee.employeeName}}</span>
+  </div>
+</div>
+
+<alert type="info" dismissible="true" (onClose)="onRoomAlertClose()"  *ngIf="roomAlertChecker == true">
+  Room has been updated successfully
+</alert>
+
+<div class="row" *ngIf="rooms.length > 0 && employee.employeeRole !== 'admin'">
+  <div class="col-sm-6 col-md-4 col-lg-3" *ngFor = "let room of rooms">
+    <div class="card">
+      <div class="card-header bg-success" *ngIf="room.roomStatus == 'available'">
+        Room {{room.roomNumber}}
+
+        <div class="btn-group card-header-actions" dropdown>
+          <button dropdownToggle type="button" class="btn btn-sm dropdown-toggle"
+                  #dropdown (mouseover)="dropdown.click()">
+            Actions <span class="caret"></span>
+          </button>
+          <ul *dropdownMenu class="dropdown-menu" role="menu">
+            <li role="menuitem">
+              <a class="dropdown-item" [routerLink]="['room-info', room.roomId]">View Room</a>
+              <a class="dropdown-item" (click)="updateRoomSaleStatus(room.roomId, 'true')"
+                *ngIf="room.notForSale !== 'true'">Not For Sale</a>
+              <a class="dropdown-item" (click)="updateRoomSaleStatus(room.roomId, 'false')"
+                 *ngIf="room.notForSale === 'true'">For Sale</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="card-header bg-dark" *ngIf="room.roomStatus == 'occupied'  && room.lostKey != 'true'">
+        Room {{room.roomNumber}}
+
+        <div class="btn-group card-header-actions" dropdown>
+          <button dropdownToggle type="button" class="btn btn-sm dropdown-toggle"
+                  #dropdown (mouseover)="dropdown.click()">
+            Actions <span class="caret"></span>
+          </button>
+          <ul *dropdownMenu class="dropdown-menu" role="menu">
+            <li role="menuitem" *ngIf="room.dropOffKey == 'false' || room.dropOffKey == null">
+              <a class="dropdown-item" (click)="open(dropOffKey)">Dropoff Key</a>
+            </li>
+            <li role="menuitem" *ngIf="room.dropOffKey == 'true'">
+              <a class="dropdown-item" (click)="pickUpKey(room.roomId)">Pickup Key</a>
+            </li>
+            <li role="menuitem" *ngIf="room.lostKey == 'false' || room.lostKey == null">
+              <a class="dropdown-item" (click)="open(lostKey)">Lost Key</a>
+            </li>
+            <li role="menuitem" (click)="open(changeRoom)"><a class="dropdown-item">Change Room</a></li>
+            <li role="menuitem" (click)="open(extendStay)"><a class="dropdown-item">Extend Stay</a></li>
+            <li class="divider dropdown-divider"></li>
+            <li role="menuitem"><a class="dropdown-item" [routerLink]="['room-info', room.roomId]">View Room</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card-header pg-danger" *ngIf="room.roomStatus == 'occupied' && room.lostKey == 'true'">
+        Room {{room.roomNumber}}
+
+        <div class="btn-group card-header-actions" dropdown>
+          <button dropdownToggle type="button" class="btn btn-sm dropdown-toggle"
+                  #dropdown (mouseover)="dropdown.click()">
+            Actions <span class="caret"></span>
+          </button>
+          <ul *dropdownMenu class="dropdown-menu" role="menu">
+            <li role="menuitem"><a class="dropdown-item" (click)="open(changeKey)">Change Key</a></li>
+            <li role="menuitem"><a class="dropdown-item">Change Room</a></li>
+            <li class="divider dropdown-divider"></li>
+            <li role="menuitem"><a class="dropdown-item" [routerLink]="['room-info', room.roomId]">View Room</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="roomCards">
+        <div class="firstFlex">
+          <div>
+            <div>
+              <span *ngIf="room.currentOccupant == 0">No Occupant</span>
+              <span *ngIf="room.currentOccupant === null">Multiple Occupants</span>
+              <span *ngIf="room.currentOccupant != 0 && room.currentOccupant !== null">{{room.currentOccupant}}</span>
+            </div>
+            <div>
+              <span style="text-transform: capitalize">{{room.roomStatus}}</span>
+              <span *ngIf="room.dropOffKey === 'true' && room.lostKey != 'true'" style="color:#BF0808">(Key dropped)</span>
+              <span *ngIf="room.lostKey === 'true'" style="color:#BF0808">(Key lost)</span>
+              <span *ngIf="room.notForSale === 'true'" style="color:#BF0808">(Not For Sale)</span>
+            </div>
+            <div>
+              <!--<span>Cost:</span>-->
+              <span>&#8358; {{room.cost | number}}</span>
+            </div>
+            <div>
+              <span style="text-transform: capitalize">{{room.roomTypeName}} room</span>
+            </div>
+            <div>
+              <span style="color: #CA2012" *ngIf="room.daysLeft === null">Can be occupied now</span>
+              <span style="color: #CA2012" *ngIf="room.daysLeft === -1">Time Elapsed</span>
+              <span style="color: #CA2012" *ngIf="room.daysLeft == 0">Today</span>
+              <span style="text-transform: capitalize; color: #CA2012" *ngIf="room.daysLeft == 2">{{room.daysLeft}} days left</span>
+              <span style="text-transform: capitalize; color: #CA2012" *ngIf="room.daysLeft == 1">{{room.daysLeft}} day left</span>
+              <span style="text-transform: capitalize; color: #149C5A" *ngIf="room.daysLeft > 2">{{room.daysLeft}} days left</span>
+            </div>
+          </div>
+
+          <div>
+            <span [class]="room.icon" *ngIf="room.roomStatus == 'occupied' && room.lostKey === 'true'" style="font-size: 40px"
+                  [style.color]="'#BF0808'" [tooltip]="room.roomTypeName"></span>
+
+            <span [class]="room.icon" *ngIf="room.roomStatus == 'occupied' && room.lostKey !== 'true'" style="font-size: 40px"
+                  [style.color]="'#2F353A'" [tooltip]="room.roomTypeName"></span>
+
+            <span [class]="room.icon" *ngIf="room.roomStatus == 'available'" style="font-size: 40px"
+                  [style.color]="'#4DBD74'" [tooltip]="room.roomTypeName"></span>
+          </div>
+        </div>
+        <div>
+          <div class="progress progress-xs mt-3 mb-0">
+            <div class="progress-bar" style="background-color: #149C5A" role="progressbar" *ngIf="room.daysLeft > 2"
+                 aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" [tooltip]="room.daysLeft + ' days left'">
+            </div>
+            <div class="progress-bar pg-danger" role="progressbar" *ngIf="room.daysLeft == -1"
+                 aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" [tooltip]="'Time Elapsed'">
+            </div>
+            <div class="progress-bar pg-danger" role="progressbar" *ngIf="room.daysLeft == 2"
+                 aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" [tooltip]="room.daysLeft + ' days left'">
+            </div>
+            <div class="progress-bar pg-danger" role="progressbar" *ngIf="room.daysLeft == 1"
+                 aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" [tooltip]="room.daysLeft + ' day left'">
+            </div>
+            <div class="progress-bar pg-danger" role="progressbar" *ngIf="room.daysLeft == 0"
+                 aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" [tooltip]="room.daysLeft + ' Today'">
+            </div>
+          </div>
+        </div>
+
+        <ng-template #extendStay let-modal>
+          <div class="modal-header">
+            <h4 class="modal-title">Extend Stay Form</h4>
+            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="extendRoomNumber" class="amountLbl">
+                      Room Number
+                      <span class="mr-auto"></span>
+                    </label>
+                    <input type="text" id="extendRoomNumber" class="form-control"
+                           [value]="'Room '+ room.roomNumber + ' (&#8358;' + room.cost + ')'" disabled>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="extendOption">Extend Options</label>
+                <select id="extendOption" class="form-control" [(ngModel)]="extendOption" (change)="extendOptionToggle()"
+                        name="extendOption" required>
+                  <option value="hour">Extend by hour</option>
+                  <option value="day">Extend by day</option>
+                </select>
+              </div>
+              <div [class.hideElement]="extendOptionChecker">
+                <div class="form-group" [class.hideElement]="customizeDisplay">
+                  <label for="bank">Extension Length</label>
+                  <select id="bank" class="form-control" (change)="getExtendStayCost(room.freeDate, room.cost)"
+                          [(ngModel)]="extendStayHours" name="extendStayDays" required>
+                    <option value="1">1 hour</option>
+                    <option value="2">2 hours</option>
+                    <option value="3">3 hours</option>
+                    <option value="4">4 hours</option>
+                    <option value="5">5 hours</option>
+                    <option value="6">6 hours</option>
+                    <option value="7">7 hours</option>
+                    <option value="8">8 hours</option>
+                  </select>
+                </div>
+                <div class="row" [class.hideElement]="!customizeDisplay">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="extendOptionHours">Hours</label>
+                      <input type="number" id="extendOptionHours" class="form-control" [(ngModel)]="extendStayHours"
+                             name="extendStayHours">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="extendOptionRate">Rate (in percent)</label>
+                      <input type="number" id="extendOptionRate" class="form-control" [(ngModel)]="extendStayRate"
+                             name="extendStayRate" (keyup)="getExtendStayCost(room.freeDate, room.cost)">
+                    </div>
+                  </div>
+                </div>
+                <div class="pull-right" [class.hideElement]="customizeDisplay">
+                  <span class="customize" (click)="customizeDisplayHandler()">Customize</span>
+                </div>
+                <div class="pull-right" [class.hideElement]="!customizeDisplay">
+                  <span class="customize" (click)="customizeDisplayHandler()">Cancel Customize</span>
+                </div>
+              </div>
+              <div [class.hideElement]="!extendOptionChecker">
+                <div class="form-group">
+                  <label>Extend To</label>
+                  <div class="input-group">
+                    <input class="form-control" placeholder="YYYY-MM-DD" name="dp" ngbDatepicker #d="ngbDatepicker"
+                      [(ngModel)]="extendNewDate" [minDate]="minDate">
+                    <div class="input-group-append">
+                      <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button"><i class="fa fa-calendar"></i></button>
+                    </div>
+                  </div>
+                </div>
+                <button class="btn btn-primary btn-sm" (click)="availableRoomHandler()">Check Room Availability</button>
+                <div class="text-center" [class.hideElement]="availableRoomChecker">
+                  <span class="text-success">Room Available</span>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <span class="serviceTotal">Extra Cost: &#8358; {{extendStayCost | number}}</span>
+            <button type="button" class="btn btn-primary" (click)="extendGuestStay(room.roomId)">Extend Stay</button>
+          </div>
+        </ng-template>
+
+        <ng-template #dropOffKey let-modal>
+          <div class="modal-header">
+            <h4 class="modal-title">DropOff Key Form</h4>
+            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form #dropOffKeyForm="ngForm">
+              <div class="form-group">
+                <label for="dropOffNote">Why are you dropping off key?</label>
+                <textarea id="dropOffNote" class="form-control" style="height: 100px" [(ngModel)]="dropOffKeyNote"
+                          name="dropOffKeyNote" required>
+                </textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" (click)="dropOffRoomKey(room.roomId)"
+            [disabled]="dropOffKeyForm.invalid">Save</button>
+          </div>
+        </ng-template>
+
+        <ng-template #lostKey let-modal>
+          <div class="modal-header">
+            <h4 class="modal-title">Lost Key Form</h4>
+            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form #lostKeyForm="ngForm">
+              <div class="form-group">
+                <label for="lostKeyNote">Note:</label>
+                <textarea id="lostKeyNote" class="form-control" style="height: 100px" [(ngModel)]="lostKeyNote"
+                  name="lostKeyNote" required></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" (click)="lostRoomKey(room.roomId)"
+             [disabled]="lostKeyForm.invalid">Save</button>
+          </div>
+        </ng-template>
+
+        <ng-template #changeRoom let-modal>
+          <div class="modal-header">
+            <h4 class="modal-title">Change Room Form</h4>
+            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="roomNumber" class="amountLbl">
+                      Room Number
+                      <span class="mr-auto"></span>
+                    </label>
+                    <input type="text" id="roomNumber" class="form-control"
+                           [value]="'Room '+ room.roomNumber + ' (&#8358;' + room.cost + ')'" disabled>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="roomType2">Room Type</label>
+                    <input type="text" id="roomType2" class="form-control" [value]="room.roomTypeName" disabled>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="roomType">Room Type</label>
+                <select id="roomType" class="form-control" [(ngModel)]="chosenRoomType" (change)="getAvailableRooms(room.freeDate)"
+                        name="roomType" required>
+                  <option *ngFor="let type of hotelRoomTypes" [value]="type.roomTypeId">{{type.roomTypeName}}</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="changeReason">Change Reason</label>
+                <input type="text" id="changeReason" class="form-control" [(ngModel)]="changeRoomReason"
+                       name="changeReason" required>
+              </div>
+              <div class="form-group">
+                <label for="availableRooms">Available Rooms</label>
+                <select id="availableRooms" class="form-control" [(ngModel)]="newRoomId" name="newRoomId" required>
+                  <option *ngIf="availableRooms.length === 0" disabled>No available room for this room type</option>
+                  <option *ngFor="let changeRoom of availableRooms" [value]="changeRoom.roomId">
+                    Room {{changeRoom.roomNumber}} (&#8358;{{changeRoom.cost}})
+                  </option>
+                </select>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" (click)="executeChangeRoom(room.roomId, room.daysSpent, room.checkInId)">
+              Change
+            </button>
+          </div>
+        </ng-template>
+
+        <ng-template #changeKey let-modal>
+          <div class="modal-header">
+            <h4 class="modal-title">Change Key Form</h4>
+            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <label for="changeKey-reason">Why are you changing key?</label>
+                <textarea id="changeKey-reason" class="form-control" style="height: 100px"></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" (click)="changeRoomKey(room.roomId)">Change</button>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="emptyPage" *ngIf="rooms.length === 0 && employee.employeeRole !== 'admin'">
+  <div class="fa fa-folder-open-o"></div>
+  <div>No Room has been created</div>
+</div>
+
+<div class="emptyPage" *ngIf="employee.employeeRole === 'admin'">
+  <div class="fa fa-user-secret"></div>
+  <div>You are an admin</div>
+</div>

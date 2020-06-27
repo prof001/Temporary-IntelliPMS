@@ -1,0 +1,44 @@
+<div class="col-12 col-lg-12">
+  <div class="card">
+    <div class="card-header">
+      Rooms Status
+    </div>
+    <div class="card-body">
+      <table class="table table-responsive-sm table-outline table-hover">
+        <thead class="thead-light">
+        <tr>
+          <th>Sn</th>
+          <th>Room</th>
+          <th>Status</th>
+          <th>Room Sale Status</th>
+          <th>Lost Key</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let room of roomReports; let i = index">
+          <td>{{i+1}}</td>
+          <td>Room {{room.roomNumber}}</td>
+          <td>
+            <span class="status bg-dark" *ngIf="room.roomStatus === 'occupied'">Occupied</span>
+            <span class="status bg-success" *ngIf="room.roomStatus === 'available'">
+              Available
+            </span>
+          </td>
+          <td>
+            <span class="status" [style.background-color]="'#B7463E'" *ngIf="room.notForSale === 'true'">Not For Sale</span>
+            <span class="status bg-success"  *ngIf="room.notForSale !== 'true'">
+              For Sale
+            </span>
+          </td>
+          <td>
+            <span class="status" [style.background-color]="'#B7463E'" *ngIf="room.lostKey === 'true'">Key Lost</span>
+            <span class="status bg-success" *ngIf="room.lostKey !== 'true'">
+              Key Available
+            </span>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,25 @@
+.table tr:nth-child(1) td {
+  border: none;
+  padding-top: 0;
+}
+
+.btn-sm {
+  width: 60px;
+}
+
+.roomPickerCard .card-body{
+  max-height: 400px;
+  overflow: auto;
+}
+
+#submitBtnDiv {
+  display:flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  padding-bottom: 13px;
+}
+
+.autocomplete {
+  width: 85%
+}
